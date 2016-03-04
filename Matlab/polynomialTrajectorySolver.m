@@ -22,11 +22,11 @@ A = [ti^9, ti^8, ti^7, ti^6, ti^5, ti^4, ti^3, ti^2, ti, 1;
 %create the row vector of for the answers to these equations
 X = [xi_0, xi_1, xi_2, xi_3, xi_4, xf_0, xf_1, xf_2, xf_3, xf_4]';
 
-%solve for the coefficient matrix
+%solve for the coefficient vector
 C = inv(A)*X
 
 %create the time matrix
-T = [ti:0.01:tf];
+T = [ti:0.00001:tf];
 
 %use poly val to get the coordinates of the equation
 Y = polyval(C, T);
