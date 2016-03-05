@@ -14,6 +14,13 @@ c = 0;
 d = 0;
 
 %solve for angles
+a = asin(x / sqrt(x^2 + y^2))
+T = [asin(r1*cos(a)), asin(r2*cos(a)), asin(r3*cos(a));
+     asin(r1*sin(a)), asin(r2*sin(a)), asin(r3*sin(a));
+     acos(r1),        acos(r2),        acos(r3)];
+P = [asin(x), asin(y), asin(z)]';
+
+ANG = inv(T)*P
 
 % create the vectors    
 v0 = [0, 0, 0]
