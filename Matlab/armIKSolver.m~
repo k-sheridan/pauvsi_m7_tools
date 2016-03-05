@@ -1,0 +1,33 @@
+function armIKSolver(x, y, z)
+%armIKSolver Summary of this function goes here
+%   solves for the angles of servos given a requested final tip position
+
+%create the arm bone lengths in meters
+r1 = 3;
+r2 = 6;
+r3 = 3;
+
+%create the angles and give them default variables in radians
+a = 0;
+b = 0;
+c = 0;
+d = 0;
+
+% create the vectors    
+v0 = [0, 0, 0]
+v1 = [r1*sin(b)*cos(a), r1*sin(b)*sin(a), r1*cos(b)]
+v2 = [r2*sin(c)*cos(a), r2*sin(c)*sin(a), r2*cos(c)]
+v3 = [r3*sin(d)*cos(a), r3*sin(d)*sin(a), r3*cos(d)]
+
+startMat = ones
+
+axis([0 3 0 4 -10 2]), pbaspect([2 1 1])
+hold on
+arrow3(v0, v1,'b',0.9)
+arrow3(v1, v2,'b',0.9)
+arrow3(v2, v3,'b',0.9)
+hold off
+
+
+end
+

@@ -26,7 +26,7 @@ X = [xi_0, xi_1, xi_2, xi_3, xi_4, xf_0, xf_1, xf_2, xf_3, xf_4]';
 C = inv(A)*X
 
 %create the time matrix
-T = [ti:0.1:tf];
+T = [ti:0.00001:tf];
 
 %use poly val to get the coordinates of the equation
 Y = polyval(C, T);
