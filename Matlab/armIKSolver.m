@@ -32,7 +32,7 @@ ik_x = sqrt(x^2+y^2)
 ik_z = z
 
 %calculate the ik_deltaP (relative change in x y we are solving for)
-ik_deltaP = [sqrt(deltaP(1)^2 + deltaP(2)^2), deltaP(3)]
+ik_deltaP = [deltaP(3), sqrt(deltaP(1)^2 + deltaP(2)^2)]
 %ik_deltaP = [-0.2, -0.3]
 
 %create the Jacobian matrix
@@ -45,9 +45,9 @@ J = [(r1*cos(b)+r2*cos(b+c)+r3*cos(b+c+d)), (r2*cos(b+c)+r3*cos(b+c+d)), (r3*cos
 deltaTheta = pinv(J) * ik_deltaP'
 
 % update the angles of the virtual arm
-b = b + deltaTheta(1, 1);
-c = c + deltaTheta(2, 1);
-d = d + deltaTheta(3, 1);
+b = b + deltaTheta(1);
+c = c + deltaTheta(2);
+d = d + deltaTheta(3);
 
 %compute positions and draw
 [p1, p2] = armPositionViaAngles(a, b, c, d, r1, r2, r3);
