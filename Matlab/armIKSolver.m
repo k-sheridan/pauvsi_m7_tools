@@ -9,33 +9,45 @@ r3 = .1;
 
 %create the starting angles and give them default variables in radians +
 %pos
-a = 0;
-b = 0;
-c = 0;
-d = 0;
-xCurr = 0
-yCurr = 0
-zCurr = r1+r2+r3
+a = pi/4;
+b = pi/4;
+c = pi/4;
+d = pi/4;
+%xCurr = 0;
+%yCurr = 0;
+%zCurr = r1+r2+r3;
+[p1, p2] = armPositionViaAngles(a, b, c, d, r1, r2, r3);
+xCurr = p2(3, 1);
+yCurr = p2(3, 2);
+zCurr = p2(3, 3);
 
 %solve for angles
-a = asin(x / sqrt(x^2 + y^2));
+a = atan2(y, x);
 
 %create the deltaP vec
 deltaP = [x - xCurr, y - yCurr, z - zCurr];
 
 %this is the relative x y position that we are tring to solve for
-ik_x = sqrt(x^2+y^2);
-ik_z = z;
+ik_x = sqrt(x^2+y^2)
+ik_z = z
 
 %calculate the ik_deltaP (relative change in x y we are solving for)
-ik_deltaP = [sqrt(deltaP(1)^2 + deltaP(2)^2), deltaP(3)];
+ik_deltaP = [sqrt(deltaP(1)^2 + deltaP(2)^2), deltaP(3)]
+%ik_deltaP = [-0.2, -0.3]
 
 %create the Jacobian matrix
 J = [(r1*cos(b)+r2*cos(b+c)+r3*cos(b+c+d)), (r2*cos(b+c)+r3*cos(b+c+d)), (r3*cos(b+c+d));
-    -(r1*sin(b)+r2*sin(b+c)+r3*sin(b+c+d)), -(r2*sin(b+c)+r3*sin(b+c+d)), -(r3*sin(b+c+d))]
+    -(r1*sin(b)+r2*sin(b+c)+r3*sin(b+c+d)), -(r2*sin(b+c)+r3*sin(b+c+d)), -(r3*sin(b+c+d))];
 
-%solve for deltaTheta
-%deltaTheta = svd(J) * ik_deltaP;
+
+%solve for deltaTheta using the singular value decomposed jacobian the pinv
+%function does this
+deltaTheta = pinv(J) * ik_deltaP'
+
+% update the angles of the virtual arm
+b = b + deltaTheta(1, 1);
+c = c + deltaTheta(2, 1);
+d = d + deltaTheta(3, 1);
 
 %compute positions and draw
 [p1, p2] = armPositionViaAngles(a, b, c, d, r1, r2, r3);
