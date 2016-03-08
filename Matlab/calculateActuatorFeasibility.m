@@ -60,7 +60,7 @@ for it = [1:1:length(accelRootsZ)]
 end
 
 % now that we know where the roots of the acceleration equation are, we can
-% make sure that the requested accelerations are within feasible limits
+% make sure that the requested velocities are within feasible limits
 
 for it = [1:1:length(accelRoots)]
     if(accelRoots(it) ~= 0)
