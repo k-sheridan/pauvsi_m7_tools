@@ -1,4 +1,4 @@
-function [ maximums ] = calculateMaximums( Coefficients, derivative )
+function [ maximums ] = calculateMaximums( Coefficients, derivative, tf)
 %UNTITLED5 Summary of this function goes here
 %   this function uses a 3X10 coefficient matrix and a derivative count to
 %   calculate the maximums of a given set of functions at a given
@@ -22,7 +22,7 @@ rootsZ = roots(polyder(Coefficients(3, :)));
 foundRoots = zeros(1, 2);
 index = 1;
 for it = (1:1:length(rootsX))
-    if isreal(rootsX(it))
+    if isreal(rootsX(it)) && rootsX(it) <= tf && rootsX(it) >= 0
         if ~any(~(rootsX(it) - foundRoots))
             %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsX(it);
@@ -31,7 +31,7 @@ for it = (1:1:length(rootsX))
     end
 end
 for it = (1:1:length(rootsY))
-    if isreal(rootsY(it))
+    if isreal(rootsY(it)) && rootsY(it) <= tf && rootsY(it) >= 0
         if ~any(~(rootsY(it) - foundRoots))
             %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsY(it);
@@ -40,7 +40,7 @@ for it = (1:1:length(rootsY))
     end
 end
 for it = (1:1:length(rootsZ))
-    if isreal(rootsZ(it))
+    if isreal(rootsZ(it)) && rootsZ(it) <= tf && rootsZ(it) >= 0
         if ~any(~(rootsZ(it) - foundRoots))
             %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsZ(it);

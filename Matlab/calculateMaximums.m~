@@ -19,12 +19,12 @@ rootsY = roots(polyder(Coefficients(2, :)));
 rootsZ = roots(polyder(Coefficients(3, :)));
 
 %combine the roots together without repeating for optimization
-foundRoots = zeros(1, 5);
+foundRoots = zeros(1, 2);
 index = 1;
 for it = (1:1:length(rootsX))
     if isreal(rootsX(it))
         if ~any(~(rootsX(it) - foundRoots))
-            fprintf('ADDED ROOT\n')
+            %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsX(it);
             index = index + 1;
         end
@@ -33,16 +33,16 @@ end
 for it = (1:1:length(rootsY))
     if isreal(rootsY(it))
         if ~any(~(rootsY(it) - foundRoots))
-            fprintf('ADDED ROOT\n')
+            %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsY(it);
             index = index + 1;
         end
     end
 end
 for it = (1:1:length(rootsZ))
-    if isreal(rootsZ(it))
+    if isreal(rootsZ(it)) && rootsZ(it)
         if ~any(~(rootsZ(it) - foundRoots))
-            fprintf('ADDED ROOT\n')
+            %fprintf('ADDED ROOT\n')
             foundRoots(index) = rootsZ(it);
             index = index + 1;
         end
@@ -52,6 +52,12 @@ end
 maximums = zeros(3, length(foundRoots));
 
 for it = (1:1:length(foundRoots))
+    maximums(:, it) = [polyval(Coefficients(1, :), foundRoots(it));
+        polyval(Coefficients(2, :), foundRoots(it));
+        polyval(Coefficients(3, :), foundRoots(it))];
+end
+
+return;
 
 end
 
