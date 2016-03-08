@@ -9,10 +9,10 @@ r3 = .1;
 
 %create the starting angles and give them default variables in radians +
 %pos
-a = pi/4;
-b = pi/4;
-c = pi/4;
-d = pi/4;
+a = 0;
+b = 0;
+c = 0;
+d = 0;
 %xCurr = 0;
 %yCurr = 0;
 %zCurr = r1+r2+r3;

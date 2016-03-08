@@ -1,0 +1,65 @@
+function [Error] = calculateActuatorFeasibility(Coefficients, Mass, Moment, MaxVel, tf)
+%UNTITLED4 Summary of this function goes here
+%   This function will test a given set of polynomials to see if they fit
+%   within the actuator constraints specified
+%   ESSENTIALLY 
+%   Coefficients: a 3X10 Matrix of coefficients
+%   Mass
+%   Moment
+%   tf: the final time
+
+% Tackle the x axis polynomial first
+g = -9.81
+
+% create the matrix for the acceleration coefficients for use later
+accelCoefficients = ones(3, 8);
+accelCoefficients(1, :) = polyder(polyder(Coefficients(1, :)));
+accelCoefficients(2, :) = polyder(polyder(Coefficients(2, :)));
+accelCoefficients(3, :) = polyder(polyder(Coefficients(3, :)));
+
+%calculate the roots of the acceleration for the max/min velocity 
+accelRootsX = real(roots(accelCoefficients(1, :)))';
+accelRootsY = real(roots(accelCoefficients(2, :)))';
+accelRootsZ = real(roots(accelCoefficients(3, :)))';
+
+accelRoots = zeros(1, 5);
+index = 1;
+
+%this will check if any value in accelRoots doesnt match the X vec and adds
+%it
+for it = [1:1:length(accelRootsX)]
+    if ~any(~(accelRootsX(it) - accelRoots))
+        fprintf('ADDED ACCELERATION ROOT\n')
+        accelRoots(index) = accelRootsX(it);
+        index = index + 1;
+    end
+end
+%this will check if any value in accelRoots doesnt match the Y vec and adds
+%it
+for it = [1:1:length(accelRootsY)]
+    if ~any(~(accelRootsY(it) - accelRoots))
+        fprintf('ADDED ACCELERATION ROOT\n')
+        accelRoots(index) = accelRootsY(it);
+        index = index + 1;
+    end
+end
+%this will check if any value in accelRoots doesnt match the Z vec and adds
+%it
+for it = [1:1:length(accelRootsZ)]
+    if ~any(~(accelRootsZ(it) - accelRoots))
+        fprintf('ADDED ACCELERATION ROOT\n')
+        accelRoots(index) = accelRootsZ(it);
+        index = index + 1;
+    end
+end
+
+% now that we know where the roots of the acceleration equation are, we can
+% make sure that the requested accelerations are within feasible limits
+
+for it = [1:1:length(accelRoots)]
+    polyva
+end
+
+
+end
+
