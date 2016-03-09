@@ -29,7 +29,7 @@ for it = (1:1:ITERATIONS)
     
     %now that we have the Coefficient matrix run the calculate Actuator
     %feasibility function
-    Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/6, t_mid);
+    Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/4, t_mid);
     
     % reasses the bounding points of the newton's method variables
     if Error == 1
