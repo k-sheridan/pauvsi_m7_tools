@@ -49,13 +49,17 @@ for it = (1:1:length(rootsZ))
     end
 end
 
-maximums = zeros(3, length(foundRoots));
+maximums = zeros(3, length(foundRoots) + 1);
 
 for it = (1:1:length(foundRoots))
     maximums(:, it) = [polyval(Coefficients(1, :), foundRoots(it));
         polyval(Coefficients(2, :), foundRoots(it));
         polyval(Coefficients(3, :), foundRoots(it))];
 end
+
+maximums(:, length(foundRoots) + 1) = [polyval(Coefficients(1, :), tf);
+        polyval(Coefficients(2, :), tf);
+        polyval(Coefficients(3, :), tf)];
 
 return;
 

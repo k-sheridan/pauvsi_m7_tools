@@ -18,7 +18,7 @@ for it = (1:length(maxima))
     %account mass and gravity
     %mag is the [0, 0, 0, F_Total]' vector of the quadrotor. It must not
     %exceed the maximum possible acceleration
-    mag = norm(Mass * (maxima(:, it) + [0; 0; g]));
+    mag = norm();
     if mag > MaxForce
         Error = 1;
         return
@@ -26,19 +26,13 @@ for it = (1:length(maxima))
         %since it appears that the magnitude of the force is possible
         fprintf('Magnitude of force within reasonable limits')
         %calculate the Fi and Fb vectors and check Fb's sign
-        %also calculate the unit vectors and possibly recalculate them
         Fb = [0;0;mag];
         Fi = Mass * (maxima(:, it) + [0; 0; g]);
-        Fb_bar = Fb / norm(Fb);
-        Fi_bar = Fi / norm(Fi);
+        Fb
         %checking the sign of Fb
         if Fi'*Fb < 0
             Fb = -1 * Fb;
-            Fb_bar = Fb / norm(Fb);
         end
-        
-        %now calculate the approx_Qd
-        approx_Qd = (1/(sqrt(2 * (1 + Fi_bar' * Fb_bar)))) * [1 + Fi_bar' * Fb_bar; cross(Fi_bar, Fb_bar)]
     end
 end
 

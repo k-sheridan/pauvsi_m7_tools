@@ -1,0 +1,18 @@
+function [C] = polynomialTrajectorySolver(X, Y, Z, tf)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+%   This will solve for the coefficients of a constrained 9 order
+%   polynomial
+
+%declare ti as zero
+ti = 0;
+
+A = get9DegPolyMatrix(ti, tf)
+
+%solve for the coefficient vector
+C = zeros(3, 10);
+C(1, :) = inv(A)*X'
+
+
+end
+
