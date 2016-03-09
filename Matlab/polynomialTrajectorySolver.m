@@ -1,4 +1,4 @@
-function [C] = polynomialTrajectorySolver(X, Y, Z, tf)
+function [C, tf] = polynomialTrajectorySolver(X, Y, Z)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %   This will solve for the coefficients of a constrained 9 order
@@ -6,6 +6,9 @@ function [C] = polynomialTrajectorySolver(X, Y, Z, tf)
 
 %declare ti as zero
 ti = 0;
+%this is a ball park estimate of tf for starting
+%in the future it should take into account the distance
+tf = 10;
 
 A = get9DegPolyMatrix(ti, tf);
 
@@ -17,7 +20,7 @@ C(3, :) = inv(A)*Z';
 
 %now that we have the Coefficient matrix run the calculate Actuator
 %feasibility function
-calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, tf)
+Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/6, tf);
 
 
 end
