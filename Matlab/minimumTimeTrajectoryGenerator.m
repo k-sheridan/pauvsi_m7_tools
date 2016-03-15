@@ -1,8 +1,52 @@
-function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start, mid, end, Mass, Moment, MaxAngle, MaxForce, MaxVelocity)
+function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start, mid, final, MIDPOINT_MODE, Mass, Moment, MaxAngle, MaxForce, MaxVelocity)
 %UNTITLED7 Summary of this function goes here
 %   This will generate a trajectory that is flyable by a quadrotor it may
-%   take a second
+%   take a second.
+%   The format for start and end is [x_0, x_1, x_2, x_3, x_4]
+%                                   [y_0, y_1, y_2, y_3, y_4]
+%                                   [z_0, z_1, z_2, z_3, z_4]
+%
+%   the format for mid is [x_0, x2_0, ...]    [x_0, x2_0]
+%                         [y_0, y2_0, ...]    [y_0, y2_0]
+%                         [z_0, z2_0, ...]    [z_0, z2_0]
+%                         [x_1, x2_1, ...]
+%                         [y_1, y2_1, ...]
+%                         [z_1, z2_1, ...]
+%                    MODE:     'VEL'            'NO_VEL'    'NONE'
+%                   
 
+
+%if this is in velocity mode
+if strcmp(MIDPOINT_MODE, 'VEL') == 1
+    
+    Trajectory(:, :, 1) = polynomialTrajectorySolver([start(1, :), mid(1, 1), mid(4, 1), 0, 0, 0], [start(2, :), mid(2, 1), mid(5, 1), 0, 0, 0], [start(3, :), mid(3, 1), mid(6, 1), 0, 0, 0]);
+    
+    [midRows, midCols] = size(mid);
+    
+    for z_index = (1:1:midCols);
+       if ~(z_index == midCols)
+           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, mid(1, z_index + 1), mid(4, z_index + 1), 0, 0, 0], [mid(2, z_index), mid(5, z_index), 0, 0, 0, mid(2, z_index + 1), mid(5, z_index + 1), 0, 0, 0], [mid(3, z_index), mid(6, z_index), 0, 0, 0, mid(3, z_index + 1), mid(6, z_index + 1), 0, 0, 0]);
+       else
+           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, final(1, :)], [mid(2, z_index), mid(5, z_index), 0, 0, 0, final(2, :)], [mid(3, z_index), mid(6, z_index), 0, 0, 0, final(3, :)]);
+       end
+    end
+    
+elseif strcmp(MIDPOINT_MODE, 'NO_VEL') == 1
+    
+else
+    
+end
+
+totalFlightTime = sum(Trajectory(1, 11, :));
+
+%plot the trajectory
+[p1, p2] = trajectoryPlotter(Trajectory);
+    
+daspect([5 5 5])
+axis([-1 11 -1 11 0 3])
+hold on
+arrow3(p1, p2, 'b', 0.9)
+hold off
 
 end
 

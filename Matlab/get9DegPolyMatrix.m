@@ -1,4 +1,4 @@
-function [A] = get9DegPolyMatrix( ti, tf )
+function [A] = get9DegPolyMatrix( ti, tf)
 %UNTITLED6 Summary of this function goes here
 %   This simply returns a 9 degree polynomial matrix
 
@@ -13,6 +13,5 @@ A = [ti^9,        ti^8,         ti^7,         ti^6,         ti^5,       ti^4,   
     8*9*tf^7,     7*8*tf^6,     6*7*tf^5,     5*6*tf^4,     4*5*tf^3,   3*4*tf^2, 2*3*tf, 1,    0,  0;
     7*8*9*tf^6,   6*7*8*tf^5,   5*6*7*tf^4,   4*5*6*tf^3,   3*4*5*tf^2, 2*3*4*tf, 1,      0,    0,  0;
     6*7*8*9*tf^5, 5*6*7*8*tf^4, 4*5*6*7*tf^3, 3*4*5*6*tf^2, 2*3*4*5*tf, 1,        0,      0,    0,  0;];
-
 end
 

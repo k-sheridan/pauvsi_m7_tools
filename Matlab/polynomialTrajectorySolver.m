@@ -1,8 +1,10 @@
-function [C, tf] = polynomialTrajectorySolver(X, Y, Z)
+function [C] = polynomialTrajectorySolver(X, Y, Z)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %   This will solve for the coefficients of a constrained 9 order
 %   polynomial
+% END_POINT_MODES: 'FULL', 'VEL', 'NOVEL'
+% for vel and no vel use zeros in their place
 %the number of iterations
 ITERATIONS = 15;
 
@@ -23,13 +25,13 @@ for it = (1:1:ITERATIONS)
     
     %solve for the coefficient matrix
     C = zeros(3, 10);
-    C(1, :) = inv(A)*X';
-    C(2, :) = inv(A)*Y';
-    C(3, :) = inv(A)*Z';
+    C(1, :) = A\X';
+    C(2, :) = A\Y';
+    C(3, :) = A\Z';
     
     %now that we have the Coefficient matrix run the calculate Actuator
     %feasibility function
-    Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/4, t_mid);
+    Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/3, t_mid);
     
     % reasses the bounding points of the newton's method variables
     if Error == 1
@@ -51,9 +53,10 @@ end
 A = get9DegPolyMatrix(ti, tf);
 %solve for the coefficient matrix
 C = zeros(3, 10);
-C(1, :) = inv(A)*X';
-C(2, :) = inv(A)*Y';
-C(3, :) = inv(A)*Z';
+C(1, :) = A\X';
+C(2, :) = A\Y';
+C(3, :) = A\Z';
+C(:, 11) = [tf, tf, tf]';
 
 end
 
