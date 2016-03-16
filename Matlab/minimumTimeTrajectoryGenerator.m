@@ -43,7 +43,7 @@ totalFlightTime = sum(Trajectory(1, 11, :));
 [p1, p2] = trajectoryPlotter(Trajectory);
     
 daspect([5 5 5])
-axis([-1 11 -1 11 0 3])
+axis([-1 11 -1 11 -10 10])
 hold on
 arrow3(p1, p2, 'b', 0.9)
 hold off

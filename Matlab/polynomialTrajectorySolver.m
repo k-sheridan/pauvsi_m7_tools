@@ -44,9 +44,9 @@ for it = (1:1:ITERATIONS)
 end
 %set the tf to the answer
 if Error == 1
-    tf = t_end
+    tf = t_end;
 else
-    tf = t_mid
+    tf = t_mid;
 end
 
 %recalculate the Coefficient matrix one last time
