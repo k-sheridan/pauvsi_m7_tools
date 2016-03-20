@@ -133,6 +133,7 @@ for it = (1:1:length(foundRoots))
         return;
     end    
 end
+motorForces
 
 %IF YOU HAVE NOT RETURNED BY THIS POINT THE TRAJECTORY IS WITHIN FEASIBLE
 %LIMITS

@@ -16,7 +16,7 @@ for z_index = (2:1:trajZ)
     time = time + Traj(1, 11, z_index);
 end
 
-p2 = p1 + (pAccel * 0.5);
+p2 = p1 + (pAccel * 0.4);
 
 end
 
