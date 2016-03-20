@@ -1,4 +1,4 @@
-function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start, mid, final, MIDPOINT_MODE, Mass, Moment, MaxAngle, MaxForce, MaxVelocity)
+function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start, mid, final, MIDPOINT_MODE, Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle)
 %UNTITLED7 Summary of this function goes here
 %   This will generate a trajectory that is flyable by a quadrotor it may
 %   take a second.
@@ -19,15 +19,15 @@ function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start
 %if this is in velocity mode
 if strcmp(MIDPOINT_MODE, 'VEL') == 1
     
-    Trajectory(:, :, 1) = polynomialTrajectorySolver([start(1, :), mid(1, 1), mid(4, 1), 0, 0, 0], [start(2, :), mid(2, 1), mid(5, 1), 0, 0, 0], [start(3, :), mid(3, 1), mid(6, 1), 0, 0, 0]);
+    Trajectory(:, :, 1) = polynomialTrajectorySolver([start(1, :), mid(1, 1), mid(4, 1), 0, 0, 0], [start(2, :), mid(2, 1), mid(5, 1), 0, 0, 0], [start(3, :), mid(3, 1), mid(6, 1), 0, 0, 0], Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle);
     
-    [midRows, midCols] = size(mid);
+    [~, midCols] = size(mid);
     
     for z_index = (1:1:midCols);
        if ~(z_index == midCols)
-           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, mid(1, z_index + 1), mid(4, z_index + 1), 0, 0, 0], [mid(2, z_index), mid(5, z_index), 0, 0, 0, mid(2, z_index + 1), mid(5, z_index + 1), 0, 0, 0], [mid(3, z_index), mid(6, z_index), 0, 0, 0, mid(3, z_index + 1), mid(6, z_index + 1), 0, 0, 0]);
+           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, mid(1, z_index + 1), mid(4, z_index + 1), 0, 0, 0], [mid(2, z_index), mid(5, z_index), 0, 0, 0, mid(2, z_index + 1), mid(5, z_index + 1), 0, 0, 0], [mid(3, z_index), mid(6, z_index), 0, 0, 0, mid(3, z_index + 1), mid(6, z_index + 1), 0, 0, 0], Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle);
        else
-           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, final(1, :)], [mid(2, z_index), mid(5, z_index), 0, 0, 0, final(2, :)], [mid(3, z_index), mid(6, z_index), 0, 0, 0, final(3, :)]);
+           Trajectory(:, :, z_index + 1) = polynomialTrajectorySolver([mid(1, z_index), mid(4, z_index), 0, 0, 0, final(1, :)], [mid(2, z_index), mid(5, z_index), 0, 0, 0, final(2, :)], [mid(3, z_index), mid(6, z_index), 0, 0, 0, final(3, :)], Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle);
        end
     end
     

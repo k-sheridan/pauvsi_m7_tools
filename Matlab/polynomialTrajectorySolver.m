@@ -1,4 +1,4 @@
-function [C] = polynomialTrajectorySolver(X, Y, Z)
+function [C] = polynomialTrajectorySolver(X, Y, Z, Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 %   This will solve for the coefficients of a constrained 9 order
@@ -6,7 +6,7 @@ function [C] = polynomialTrajectorySolver(X, Y, Z)
 % END_POINT_MODES: 'FULL', 'VEL', 'NOVEL'
 % for vel and no vel use zeros in their place
 %the number of iterations
-ITERATIONS = 15;
+ITERATIONS = 10;
 
 %declare ti as zero
 ti = 0;
@@ -31,7 +31,7 @@ for it = (1:1:ITERATIONS)
     
     %now that we have the Coefficient matrix run the calculate Actuator
     %feasibility function
-    Error = calculateActuatorFeasibility(C, 5, [1, 1, 1]', 10, 100, pi/3, t_mid);
+    Error = calculateActuatorFeasibility(C, Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle, t_mid);
     
     % reasses the bounding points of the newton's method variables
     if Error == 1
