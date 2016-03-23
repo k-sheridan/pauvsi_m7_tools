@@ -1,6 +1,6 @@
 function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start, mid, final, MIDPOINT_MODE, Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle)
 %UNTITLED7 Summary of this function goes here
-%   This will generate a trajectory that is flyable by a quadrotor it may
+%   This will generate a trajectory that is flable by a quadrotor it may
 %   take a second.
 %   The format for start and end is [x_0, x_1, x_2, x_3, x_4]
 %                                   [y_0, y_1, y_2, y_3, y_4]
@@ -15,13 +15,14 @@ function [ Trajectory, totalFlightTime ] = minimumTimeTrajectoryGenerator( start
 %                    MODE:     'VEL'            'NO_VEL'    'NONE'
 %                   
 
+%define Trajectory
+[~, midCols] = size(mid);
+Trajectory = zeros(3, 11, midCols + 1);
 
 %if this is in velocity mode
 if strcmp(MIDPOINT_MODE, 'VEL') == 1
     
     Trajectory(:, :, 1) = polynomialTrajectorySolver([start(1, :), mid(1, 1), mid(4, 1), 0, 0, 0], [start(2, :), mid(2, 1), mid(5, 1), 0, 0, 0], [start(3, :), mid(3, 1), mid(6, 1), 0, 0, 0], Mass, Moment, MaxVel, MinZForce, MaxForce, MaxAngle);
-    
-    [~, midCols] = size(mid);
     
     for z_index = (1:1:midCols);
        if ~(z_index == midCols)
@@ -40,13 +41,13 @@ end
 totalFlightTime = sum(Trajectory(1, 11, :));
 
 %plot the trajectory
-[p1, p2] = trajectoryPlotter(Trajectory);
+%[p1, p2] = trajectoryPlotter(Trajectory);
     
-daspect([5 5 5])
-axis([-1 11 -1 11 -10 10])
-hold on
-arrow3(p1, p2, 'b', 0.4)
-hold off
+%daspect([5 5 5])
+%axis([-1 11 -1 11 -10 10])
+%hold on
+%arrow3(p1, p2, 'b', 0.4)
+%hold off
 
 end
 

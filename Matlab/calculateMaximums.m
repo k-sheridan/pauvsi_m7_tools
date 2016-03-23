@@ -1,4 +1,4 @@
-function [ maximums, foundRoots ] = calculateMaximums( Coefficients, derivative, tf)
+function [ maximums, foundRoots ] = calculateMaximums( startCoefficients, derivative, tf)
 %UNTITLED5 Summary of this function goes here
 %   this function uses a 3X10 coefficient matrix and a derivative count to
 %   calculate the maximums of a given set of functions at a given
@@ -6,12 +6,13 @@ function [ maximums, foundRoots ] = calculateMaximums( Coefficients, derivative,
 
 %calculate the Coefficient matrix for the given derivative
 for it = (1:1:derivative)
-   Coefficients(1, 1:(10 - it)) = polyder(Coefficients(1, :));
-   Coefficients(2, 1:(10 - it)) = polyder(Coefficients(2, :));
-   Coefficients(3, 1:(10 - it)) = polyder(Coefficients(3, :));
-   %reset the size of coeffs
-   Coefficients = Coefficients(1:3, 1:1:(10 - it));
+   startCoefficients(1, 1:(10 - it)) = polyder(startCoefficients(1, 1:(10 - (it - 1))));
+   startCoefficients(2, 1:(10 - it)) = polyder(startCoefficients(2, 1:(10 - (it - 1))));
+   startCoefficients(3, 1:(10 - it)) = polyder(startCoefficients(3, 1:(10 - (it - 1))));
 end
+
+%reset the size of coeffs
+Coefficients = startCoefficients(1:3, 1:(10 - derivative));
 
 %find the roots of the next derivative and combine them into a roots vector
 rootsX = roots(polyder(Coefficients(1, :)));

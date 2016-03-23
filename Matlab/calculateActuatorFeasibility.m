@@ -9,13 +9,6 @@ function [Error] = calculateActuatorFeasibility(Coefficients, Mass, Moment, MaxV
 %   tf: the final time
 %MinZForce = the minumum force in the z direction typlically gravity (-45)
 
-%the simulated delta t which determines the extent of the Moment requested
-% angular acceleration = the limit as dt -> 0 with respect to angular
-% veocity
-delta_t = 0.0001;
-%this is the gain that is used to calculate the forces each motor must
-%produce
-Kd = 1;
 %the distance of each motor from the center of mass
 d = 0.4;
 %coefficient of drag related to yaw drag
@@ -23,7 +16,7 @@ c = 0;
 %gravity
 g = 9.81;
 %create the moment matrix
-J = [Moment(1), 0,         0;
+J = [Moment(1),         0,         0;
             0,          Moment(2), 0;
             0,          0,         Moment(3)];
 
@@ -64,55 +57,51 @@ Fi_prime(1, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(1, :)))), 
 Fi_prime(2, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(2, :)))), foundRoots));
 Fi_prime(3, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(3, :)))), foundRoots));
 
+% create the first derivative of force vector
+Fi_prime_prime = zeros(3, length(foundRoots));
+Fi_prime_prime(1, :) = Mass * (polyval(polyder(polyder(polyder(polyder(Coefficients(1, :))))), foundRoots));
+Fi_prime_prime(2, :) = Mass * (polyval(polyder(polyder(polyder(polyder(Coefficients(2, :))))), foundRoots));
+Fi_prime_prime(3, :) = Mass * (polyval(polyder(polyder(polyder(polyder(Coefficients(3, :))))), foundRoots));
+
 %calculate the desired omega vector
 Omega_desired = zeros(3, length(foundRoots));
+%Aplha desired calculation
+Alpha_desired = zeros(3, length(foundRoots));
+%Fi_bar_prime calc
+Fi_bar_prime = zeros(3, length(foundRoots));
+%Fi_bar_prime_prime calc
+Fi_bar_prime_prime = zeros(3, length(foundRoots));
 %create the bar vector of Fi
 Fi_bar = zeros(3, length(foundRoots));
+%moments
+Mb = zeros(3, length(foundRoots));
+
+%caclculate the bar and prime and alpha
 for it = (1:1:length(foundRoots))
     mag = norm(Fi(:, it));
     Fi_bar(:, it) = Fi(:, it) / mag;
     
-    %the omega desired calc
-    Omega_desired(:, it) = cross(Fi_bar(:, it), Fi_prime(:, it));
-    %set the z moment to zero
-    Omega_desired(3, it) = 0;
-end
-
-% now we have to calculate the current omega based on the omega we should
-% have been flying at delta_t seconds ago
-lastT = foundRoots - (ones(1, length(foundRoots)) * delta_t);
-
-Fi_last = zeros(3, length(foundRoots));
-Fi_last(1, :) = Mass * (polyval(polyder(polyder(Coefficients(1, :))), lastT));
-Fi_last(2, :) = Mass * (polyval(polyder(polyder(Coefficients(2, :))), lastT));
-% add g to the 
-Fi_last(3, :) = Mass * (polyval(polyder(polyder(Coefficients(3, :))), lastT) + (g * ones(1, length(foundRoots))));
-
-% create the first derivative of force vector
-Fi_prime_last = zeros(3, length(foundRoots));
-Fi_prime_last(1, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(1, :)))), lastT));
-Fi_prime_last(2, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(2, :)))), lastT));
-Fi_prime_last(3, :) = Mass * (polyval(polyder(polyder(polyder(Coefficients(3, :)))), lastT));
-
-%calculate the desired omega vector
-Omega_current = zeros(3, length(foundRoots));
-%create the bar vector of Fi
-Fi_bar_last = zeros(3, length(foundRoots));
-for it = (1:1:length(foundRoots))
-    mag = norm(Fi_last(:, it));
-    Fi_bar_last(:, it) = Fi_last(:, it) / mag;
+    %Calculation of fi_bar_prime
+    Fi_bar_prime(:, it) = (Fi_prime(:, it) / norm(Fi(:, it))) - ((Fi(:, it) * (Fi(:, it)' * Fi_prime(:, it))) / (norm(Fi(:, it))^3));
+    
+    % calcing fi_bar_prime_prime
+    Fi_bar_prime_prime(:, it) = (Fi_prime_prime(:, it) / norm(Fi(:, it))) - ((2 * Fi_prime(:, it) * (Fi(:, it)' * Fi_prime(:, it)) + Fi(:, it) * (Fi_prime(:, it)' * Fi_prime(:, it)) + Fi(:, it) * (Fi(:, it)' * Fi_prime_prime(:, it))) / norm(Fi(:, it))^3) + ((3 * Fi(:, it) * (Fi(:, it)' * Fi_prime(:, it))) / norm(Fi(:, it))^5);
     
     %the omega desired calc
-    Omega_current(:, it) = cross(Fi_bar_last(:, it), Fi_prime_last(:, it));
+    Omega_desired(:, it) = cross(Fi_bar(:, it), Fi_bar_prime(:, it));
     %set the z moment to zero
-    Omega_current(3, it) = 0;
+    Omega_desired(3, it) = 0;
+    
+    %the alpha vector
+    Alpha_desired(:, it) = cross(Fi_bar(:, it), (Fi_bar_prime_prime(:, it) - cross(Omega_desired(:, it), (cross(Omega_desired(:, it), Fi_bar_prime(:, it))))));
+    %set the z to zero
+    Alpha_desired(3, it) = 0;
+    
+    %FINALLY! now that we have the desired omega and the simulated current
+    %omega, we can calcuate the exact forces that each motor must produce at a
+    %given time(the maximum accelerations along a polynomial)
+    Mb(:, it) = J * Alpha_desired(:, it) + cross(Omega_desired(:, it), J * Omega_desired(:, it));
 end
-
-%FINALLY! now that we have the desired omega and the simulated current
-%omega, we can calcuate the exact forces that each motor must produce at a
-%given time(the maximum accelerations along a polynomial)
-
-Mb = -Kd * (Omega_current - Omega_desired);
 
 motorForces = zeros(4, length(Mb));
 
@@ -133,7 +122,6 @@ for it = (1:1:length(foundRoots))
         return;
     end    
 end
-motorForces
 
 %IF YOU HAVE NOT RETURNED BY THIS POINT THE TRAJECTORY IS WITHIN FEASIBLE
 %LIMITS

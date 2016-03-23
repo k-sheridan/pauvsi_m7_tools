@@ -1,0 +1,10 @@
+_mexFunction
+_emlrtMexFcnProperties
+_minimumTimeTrajectoryGenerator
+_emxEnsureCapacity
+_emxFree_real32_T
+_emxInit_real32_T
+_emxInit_real32_T1
+_minimumTimeTrajectoryGenerator_initialize
+_minimumTimeTrajectoryGenerator_terminate
+_minimumTimeTrajectoryGenerator_atexit

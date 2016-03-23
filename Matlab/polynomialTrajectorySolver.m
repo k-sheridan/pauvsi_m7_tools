@@ -52,10 +52,10 @@ end
 %recalculate the Coefficient matrix one last time
 A = get9DegPolyMatrix(ti, tf);
 %solve for the coefficient matrix
-C = zeros(3, 10);
-C(1, :) = A\X';
-C(2, :) = A\Y';
-C(3, :) = A\Z';
+C = zeros(3, 11);
+C(1, 1:10) = A\X';
+C(2, 1:10) = A\Y';
+C(3, 1:10) = A\Z';
 C(:, 11) = [tf, tf, tf]';
 
 end
