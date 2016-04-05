@@ -108,6 +108,12 @@ classdef Roomba
                 end
             end
         end
+        
+        %the touch func
+        function obj = touch(obj)
+            obj.desiredYaw = obj.desiredYaw - pi / 2;
+            obj.rotating = 1;
+        end    
                 
         %normailizes the angle to [0, 2PI)
         function angle = normalizeAngle(obj, angle)
