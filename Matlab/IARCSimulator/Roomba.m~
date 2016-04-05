@@ -73,8 +73,8 @@ classdef Roomba
         %rotate function
         function obj = rotate(obj, dt)
             %normalize the angles
-            obj.yaw = obj.normalizeAngle(obj.yaw);
-            obj.desiredYaw = obj.normalizeAngle(obj.desiredYaw);
+            obj.yaw = normalizeAngle(obj.yaw);
+            obj.desiredYaw = norm
             %determine the direction of rotation first
             %POSITIVE Direction distance to travel
             if obj.desiredYaw < obj.yaw
@@ -110,7 +110,7 @@ classdef Roomba
         end
                 
         %normailizes the angle to [0, 2PI)
-        function angle = normalizeAngle(obj, angle)
+        function angle = normalizeAngle(angle)
             while angle >= 2 * pi || angle < 0
                 if angle >= 2 * pi
                    angle = angle - 2 * pi;
