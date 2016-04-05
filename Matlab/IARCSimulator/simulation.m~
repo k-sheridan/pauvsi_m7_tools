@@ -1,0 +1,10 @@
+function [ results ] = simulation( seed )
+%Simulation for training and testing
+% Use this to train or test a neural network
+
+GAME_TIME_LIMIT = 600; %600 seconds time limit
+
+
+
+end
+

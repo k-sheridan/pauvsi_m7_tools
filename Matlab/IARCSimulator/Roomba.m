@@ -43,15 +43,20 @@ classdef Roomba
             %set the random number generator for repeatablilty
             rng(randomNumberGen);
             %check timers
-            if obj.noiseTimer >= 5
-                obj.desiredYaw = obj.desiredYaw + ((rand * 2) - 1) * obj.TURN_NOISE;
-                obj.rotating = 1; % set the object to rotate
-                obj.noiseTimer = dt; %reset timer
-            end
-            if obj.turnTimer >= 20
-                obj.desiredYaw = obj.desiredYaw + pi;
-                obj.rotating = 1; % set the object to rotate
-                obj.turnTimer = dt;
+            if ~(obj.isObstacle)
+                if obj.noiseTimer >= 5
+                    obj.desiredYaw = obj.desiredYaw + ((rand * 2) - 1) * obj.TURN_NOISE;
+                    obj.rotating = 1; % set the object to rotate
+                    obj.noiseTimer = dt; %reset timer
+                end
+                if obj.turnTimer >= 20
+                    obj.desiredYaw = obj.desiredYaw + pi;
+                    obj.rotating = 1; % set the object to rotate
+                    obj.turnTimer = dt;
+                end
+            else
+                %TODO do something for the obstacle robot like rotate or
+                %stop
             end
             %run the roomba
             if obj.rotating
