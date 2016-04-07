@@ -8,10 +8,7 @@ clf
 axis([-11 11 -11 11 0 5]) % setup axes
 for index = (1:1:length(roombas))
     if index > 5
-        create3DRoomba(roombas(index), 'r');
-    else
-        create3DRoomba(roombas(index), 'g');
-    end
+    create3DRoomba(roombas(index), 'r');
 end
 
 

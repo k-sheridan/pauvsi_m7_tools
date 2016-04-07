@@ -40,7 +40,7 @@ classdef Roomba
         end
         
         % the run function
-        function obj = run(obj, dt, randomNumberGen)
+        function [obj, usedRNG] = run(obj, dt, randomNumberGen)
             %set the random number generator for repeatablilty
             rng(randomNumberGen);
             %check timers
@@ -68,6 +68,9 @@ classdef Roomba
             %update timers
             obj.noiseTimer = obj.noiseTimer + dt;
             obj.turnTimer = obj.turnTimer + dt;
+            
+            %save rng in its state
+            usedRNG = rng;
         end
         
         %drive function
