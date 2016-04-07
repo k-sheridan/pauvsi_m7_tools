@@ -8,6 +8,7 @@ classdef Roomba
         desiredYaw;
         rotating = 0;
         isObstacle = 0;
+        isOOB = 0;
         turnTimer = 0;
         noiseTimer = 0;
         
