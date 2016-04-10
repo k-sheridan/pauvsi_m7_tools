@@ -1,0 +1,3 @@
+[submodule "javaIARC_sim/Mission-7-Simulation"]
+	path = javaIARC_sim/Mission-7-Simulation
+	url = git@github.com:Purdue-IARC/Mission-7-Simulation.git
