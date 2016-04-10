@@ -15,7 +15,7 @@ plot3([0, 0], [-10, 10], [0, 0], 'k')
 plot3([-10, 10], [0, 0], [0, 0], 'k')
 %draw roombas
 for index = (1:1:length(roombas))
-    if index > 5
+    if mod(index, 2)
         create3DRoomba(roombas(index), 'r');
     else
         create3DRoomba(roombas(index), 'g');

@@ -28,3 +28,8 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
 end
 end
 
+%%
+%used to check if a roomba has collided with and other roombas or obstacles
+%roombaIndex: the index of the roomba that is being checked
+function [collided] = hasRoombaCollided(roombaIndex, roombas)
+end
