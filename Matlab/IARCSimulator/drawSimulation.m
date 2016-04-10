@@ -4,7 +4,7 @@ function [] = drawSimulation(roombas)
 % report back vital GUI related information
 %   roombas: 1X10 Vector of roombas
 %begin drawing
-clf
+cla
 %create gorund markings
 hold on
 plot3([-10, 10], [-10, -10], [0, 0], 'r')

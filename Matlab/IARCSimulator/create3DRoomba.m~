@@ -1,7 +1,0 @@
-function [ output_args ] = create3DRoomba( input_args )
-%CREATE3DROOMBA Summary of this function goes here
-%   This create
-
-
-end
-
