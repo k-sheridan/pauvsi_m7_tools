@@ -15,6 +15,7 @@ classdef Roomba
         %CONSTANTS
         FORWARD_VELOCITY = 0.42;
         ANGULAR_VELOCITY = pi / 2;
+        RADIUS = 0.2;
         TURN_NOISE = pi / 8; %+/- pi/8
     end
     

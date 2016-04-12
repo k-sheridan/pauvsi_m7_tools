@@ -34,7 +34,6 @@ end
 %roombas a list of all roombas to check if are collided
 %the roomba in roombaIndex must be in the list
 function [collided] = hasRoombaCollided(roombaIndex, roombas)
-collided = 0;
 for index = (1:1:length(roombas))
     if index ~= roombaIndex % make sure we are not checking the same one
         if(norm(roombas(index).pos - roombas(roombaIndex).pos) <= roombas(index).RADIUS * 2) % check if they are in range for collision
@@ -42,10 +41,7 @@ for index = (1:1:length(roombas))
             angle = atan2(roombas(index).pos(2) - roombas(roombaIndex).pos(2), roombas(index).pos(1) - roombas(roombaIndex).pos(1));
             diff1 = abs((roombas(roombaIndex).yaw - 2 * pi) - angle);
             diff2 = abs((roombas(roombaIndex).yaw) - angle);
-            if diff2 <= pi / 3 || diff1 <= pi / 3
-                collided = 1; % the roomba has collided
-                break;
-            end
+            if diff1 <= pi / 3 ||
         end
     end
 end
