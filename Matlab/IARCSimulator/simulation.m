@@ -15,6 +15,11 @@ for index = (1:1:10)
     yaw = index * pi / 5;
     roombas(index) = Roomba([1 * cos(yaw), 1 * sin(yaw), 0], yaw, 0);
 end
+%create the obstacle robots
+for index = (1:1:4)
+    yaw = index * (pi / 2);
+    obstacles(index) = Roomba([4 * cos(yaw), 4 * sin(yaw), 0], yaw + (pi / 2), 1); % set them to obstacles
+end
 %start the game
 for t = (0:GAME_DT:GAME_TIME_LIMIT)
     %run roombas and pass back the rng
@@ -22,7 +27,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
         [roombas(index), randomNumberGenerator] = roombas(index).run(GAME_DT, randomNumberGenerator);
     end
     if ~mod(t,1)
-        drawSimulation(roombas)
+        drawSimulation(roombas, obstacles)
     end
     %pause(0.1);
 end

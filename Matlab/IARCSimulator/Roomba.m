@@ -7,6 +7,7 @@ classdef Roomba
         yaw;
         desiredYaw;
         rotating = 0;
+        driving = 1;
         isObstacle = 0;
         isOOB = 0;
         turnTimer = 0;
@@ -63,7 +64,8 @@ classdef Roomba
             %run the roomba
             if obj.rotating
                 obj = obj.rotate(dt);
-            else
+            end
+            if obj.driving
                 obj = obj.drive(dt);
             end
             %update timers
