@@ -64,15 +64,12 @@ classdef Roomba
                 %stop
                 if obj.obstacleStopTimer > 0
                     obj.driving = 0;
-                    obj.obstacleStopTimer = obj.obstacleStopTimer - dt;
                 else
                     obj.driving = 1;
                 end
                 %turn the roomba slightly depending on the dt
                 if obj.driving == 1
-                    yawChange =  (2 * pi) / ((8 * pi / obj.FORWARD_VELOCITY) / dt); % the amount of times a rotation must occur to follow a circle path
-                    obj.desiredYaw = obj.yaw + (yawChange);
-                    obj.rotating = 1;
+                    obj.desiredYaw = obj.yaw + ()
                 end    
             end
             %run the roomba
