@@ -69,12 +69,11 @@ end
 function [roombas, obstacles] = collideGroundRobots(roombas, obstacles)
     allGroundRobots = roombas;
     allGroundRobots(1, length(roombas) + 1:1:length(obstacles) + length(roombas)) = obstacles;
-    length(allGroundRobots)
     for index = (1:1:length(allGroundRobots))
         test = hasRoombaCollided(index, allGroundRobots);
         if test == 1
             if allGroundRobots(index).isObstacle == 0
-                allGroundRobots(index).desiredYaw = allGroundRobots(index).yaw + (pi / 4);
+                allGroundRobots(index).desiredYaw = allGroundRobots(index).yaw - (pi / 4);
                 allGroundRobots(index).rotating = 1;
                 allGroundRobots(index).driving = 0;
             else
