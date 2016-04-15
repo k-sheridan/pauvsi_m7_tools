@@ -73,7 +73,7 @@ function [roombas, obstacles] = collideGroundRobots(roombas, obstacles)
         test = hasRoombaCollided(index, allGroundRobots);
         if test == 1
             if allGroundRobots(index).isObstacle == 0
-                allGroundRobots(index).desiredYaw = allGroundRobots(index).yaw - (pi / 4);
+                allGroundRobots(index).desiredYaw = allGroundRobots(index).desiredYaw - (pi);
                 allGroundRobots(index).rotating = 1;
                 allGroundRobots(index).driving = 0;
             else
