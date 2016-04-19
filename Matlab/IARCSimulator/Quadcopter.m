@@ -6,8 +6,9 @@ classdef Quadcopter
         %variables
         pos = [0, 0, 0]; %in meters
         velocity = [0, 0, 0]; %in m/s
-        angle = [0, 0, 0]; %in radians
-        angularVelocity = [0, 0, 0]; % in radians/sec
+        angleQuat = [0, 0, 0, 0]; %in quarternion
+        angleRad = [0, 0, 0]; % in radians
+        angularVelocity = [0, 0, 0]; % in arbitrary unit
         motorForces = [0, 0, 0, 0]; % the motor forces are in newtons
         
         Trajectory;
@@ -37,6 +38,10 @@ classdef Quadcopter
     end
     
     methods
+        % Constructor for Quadcopter
+        function obj = Quadcopter(pos)
+            obj.pos = pos;
+        end
     end
     
 end
