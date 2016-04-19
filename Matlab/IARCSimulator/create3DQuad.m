@@ -1,14 +1,51 @@
-function create3DQuad(quad)
+function create3DQuad(quadcopter)
 %This will create the 3D quadrotor using plot3
 
-quadX = quad.pos(1);
-quadY = quad.pos(2);
-quadZ = quad.pos(3);
+baseColor = 'b';
+baseLineWidth = 3;
+armColor = 'b';
 
-X = [quadX - 0.03, quadX + 0.03];
-Y = [quadY - 0.03, quadY - 0.03];
-Z = [quadZ - 0.05, quadZ - 0.05];
+hold on
+% create the base of the quad
+%BOTTOM SIDE
+points = zeros(3, 2);
+points(1:3, 1) = [-0.07, -0.07, -0.04]';
+points(1:3, 2) = [0.07, -0.07, -0.04]';
+%rotate the points
+points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1)')
+points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
+p = plot3(points(1, :), points(3, :), points(3, :), baseColor);
+p.LineWidth = baseLineWidth;
 
-plot3(X, Y, Z);
+%nextline
+points = zeros(3, 2);
+points(1:3, 1) = [-0.07, 0.07, -0.04]';
+points(1:3, 2) = [0.07, 0.07, -0.04]';
+%rotate the points
+points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1)')
+points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
+p = plot3(points(1, :), points(3, :), points(3, :), baseColor);
+p.LineWidth = baseLineWidth;
+
+%nextline
+points = zeros(3, 2);
+points(1:3, 1) = [-0.07, -0.07, -0.04]';
+points(1:3, 2) = [-0.07, 0.07, -0.04]';
+%rotate the points
+points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1)')
+points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
+p = plot3(points(1, :), points(3, :), points(3, :), baseColor);
+p.LineWidth = baseLineWidth;
+
+%nextline
+points = zeros(3, 2);
+points(1:3, 1) = [0.07, -0.07, -0.04]';
+points(1:3, 2) = [0.07, 0.07, -0.04]';
+%rotate the points
+points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1)')
+points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
+p = plot3(points(1, :), points(3, :), points(3, :), baseColor);
+p.LineWidth = baseLineWidth;
+
 end
 
