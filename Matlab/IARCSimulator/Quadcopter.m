@@ -3,11 +3,37 @@ classdef Quadcopter
     %   performs the operations that a quadrotor performs
     
     properties
-        pos = [0, 0, 0];
-        velocity = [0, 0, 0];
-        angle = [0, 0, 0];
-        Trajectory;
+        %variables
+        pos = [0, 0, 0]; %in meters
+        velocity = [0, 0, 0]; %in m/s
+        angle = [0, 0, 0]; %in radians
+        angularVelocity = [0, 0, 0]; % in radians/sec
+        motorForces = [0, 0, 0, 0]; % the motor forces are in newtons
         
+        Trajectory;
+        trajectoryTimer = 0; % this variable will tell the quad how to fly
+        
+        touching = 0; % bool for whether the quad is touching a roomba or not
+        touchTimer = 0; % timer for touch maneuver
+        
+        %Constants
+        I = [1, 1, 1]; %moment of inertia for vehicle
+        %Gains
+        POSITION_GAINS_P = [1, 0, 0;
+                            0, 1, 0;
+                            0, 0, 1];
+        POSITION_GAINS_I = [1, 0, 0;
+                            0, 1, 0;
+                            0, 0, 1];
+        POSITION_GAINS_D = [1, 0, 0;
+                            0, 1, 0;
+                            0, 0, 1];
+        MOMENT_GAINS_P = [1, 0, 0;
+                          0, 1, 0;
+                          0, 0, 1];
+        MOMENT_GAINS_D = [1, 0, 0;
+                          0, 1, 0;
+                          0, 0, 1];
     end
     
     methods
