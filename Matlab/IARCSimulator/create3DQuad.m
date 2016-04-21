@@ -89,15 +89,16 @@ p = plot3(points(1, :), points(2, :), points(3, :), baseColor);
 p.LineWidth = baseLineWidth;
 
 
-%CREATE THE ARM 1
-drawArm([0.07, 0.07, 0], 0.31, 0.02, [1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([-0.07, 0.07, 0], 0.31, 0.02, [-1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([0.07, -0.07, 0], 0.31, 0.02, [1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([-0.07, -0.07, 0], 0.31, 0.02, [-1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
+%CREATE THE ARMS
+drawArm([0.07, 0.07, 0], 0.31, 0.02, [1, 1, 0], quadcopter, quadcopter.motorForces(1), armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([0.07, -0.07, 0], 0.31, 0.02, [1, -1, 0], quadcopter, quadcopter.motorForces(2), armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([-0.07, -0.07, 0], 0.31, 0.02, [-1, -1, 0], quadcopter, quadcopter.motorForces(3), armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([-0.07, 0.07, 0], 0.31, 0.02, [-1, 1, 0], quadcopter, quadcopter.motorForces(4), armColor, baseColor, armLineWidth, baseLineWidth);
+
 
 end
 
-function drawArm(base, length, thickness, dir, quadcopter, armColor, baseColor, armLineWidth, baseLineWidth)
+function drawArm(base, length, thickness, dir, quadcopter, motorForce, armColor, baseColor, armLineWidth, baseLineWidth)
 sqrt2 = sqrt(2); %sqrt(2)
 
 points = zeros(3, 2);
@@ -185,5 +186,15 @@ points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1
 points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
 p = plot3(points(1, :), points(2, :), points(3, :), baseColor);
 p.LineWidth = armLineWidth;
+
+%DRAW FORCE
+points(1:3, 1) = [base(1), base(2), base(3) + thickness]';
+points(1:3, 1) = (points(1:3, 1) + [dir(1) * length / sqrt2; dir(2) * length / sqrt2; 0])';
+points(1:3, 2) = (points(1:3, 1) + [0; 0; -motorForce / 25])'; % divide by 25 to shrink
+%rotate the points
+points(1:3, 1) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 1)');
+points(1:3, 2) = quadcopter.pos + quatrotate(quadcopter.angleQuat, points(1:3, 2)');
+p = plot3(points(1, :), points(2, :), points(3, :), baseColor);
+p.LineWidth = baseLineWidth;
 
 end

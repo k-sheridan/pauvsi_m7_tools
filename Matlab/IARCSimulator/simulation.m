@@ -12,6 +12,7 @@ randomNumberGenerator = rng; %create the random number generator
 %Initialize game time variables
 %create the quad
 quadcopter = Quadcopter([0, 0, 2.5]);
+%quadcopter.motorForces = [0, 0, 0, 0];
 %create the roombas (1X10)
 for index = (1:1:10)
     yaw = index * pi / 5;
