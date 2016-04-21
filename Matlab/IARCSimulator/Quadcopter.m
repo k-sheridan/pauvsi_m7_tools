@@ -20,6 +20,8 @@ classdef Quadcopter
         I = [1, 1, 1]; %moment of inertia for vehicle
         M = 5; %mass of quad in kg
         G = 9.806; %m/s/s close to G in Georgia
+        D = 270 / sqrt(2); % the distance from CM to motorAxle in X and Y
+        C = 0; % coefficient of drag for yaw moment 
         %Gains
         POSITION_GAINS_P = [1, 0, 0;
                             0, 1, 0;
@@ -63,6 +65,15 @@ classdef Quadcopter
             %set the random number generator for repeatablilty
             rng(randomNumberGen);
             %continue on as usual
+            %Calculate total force and torques
+            D = obj.D;
+            C = obj.C;
+            TorqueTransitionMatrix = [ 1,  1,  1,  1; % matrix that will calculate the 
+                                       D, -D, -D,  D; % moment and motor forces necessary
+                                       D,  D, -D, -D;
+                                      -C, C, -C,  C];
+            Force_Torque = TorqueTransitionMatrix * obj.motorForces' % calculate the torque and forces
+            
             % the drive equations
             F_Grav = [0, 0, -obj.M*obj.G]; % the vector of force exterted on quad by gravity
             F_BodyFrame = [0, 0, sum(obj.motorForces)]; % vector of body frame force produced by 
@@ -73,7 +84,7 @@ classdef Quadcopter
             F_net = F_Grav + F_InertialFrame;
             
             %update the current linear velocity
-            obj.velocity = obj.velocity + F_net * dt;
+            obj.velocity = obj.velocity + ((F_net * dt) / obj.M);
             %update the current position
             obj.pos = obj.pos + obj.velocity * dt;
             
