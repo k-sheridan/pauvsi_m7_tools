@@ -6,7 +6,7 @@ classdef Quadcopter
         %variables
         pos = [0, 0, 0]; %in meters
         velocity = [0, 0, 0]; %in m/s
-        angleQuat = [0, 0, 0, 0]; %in quarternion
+        angleQuat = [1, 0, 0, 0]; %in quarternion
         angleRad = [0, 0, 0]; % in radians
         angularVelocity = [0, 0, 0]; % in arbitrary unit
         motorForces = [0, 0, 0, 0]; % the motor forces are in newtons

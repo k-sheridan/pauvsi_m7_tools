@@ -1,4 +1,4 @@
-function [] = drawSimulation(roombas, obstacles)
+function [] = drawSimulation(roombas, obstacles, quadcopter)
 %drawSim Summary of this function goes here
 % The purpose of this function is too actually draw the field and GUI and
 % report back vital GUI related information
@@ -14,6 +14,10 @@ plot3([-10, -10], [-10, 10], [0, 0], 'k')
 plot3([10, 10], [-10, 10], [0, 0], 'k')
 plot3([0, 0], [-10, 10], [0, 0], 'k')
 plot3([-10, 10], [0, 0], [0, 0], 'k')
+
+%draw the quad
+create3DQuad(quadcopter);
+
 %draw roombas
 for index = (1:1:length(roombas))
     if mod(index, 2)

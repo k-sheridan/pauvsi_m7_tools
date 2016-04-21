@@ -2,12 +2,12 @@ function create3DQuad(quadcopter)
 %This will create the 3D quadrotor using plot3
 
 baseColor = 'k';
-baseLineWidth = 3;
+baseLineWidth = 1;
 armColor = 'r';
-armLineWidth = 5;
+armLineWidth = 2;
 
 % create the base of the quad
-hold on
+%hold on
 %BOTTOM SIDE
 points = zeros(3, 2);
 points(1:3, 1) = [-0.07, -0.07, -0.04]';
@@ -90,10 +90,10 @@ p.LineWidth = baseLineWidth;
 
 
 %CREATE THE ARM 1
-drawArm([0.07, 0.07, 0], 0.27, 0.02, [1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([-0.07, 0.07, 0], 0.27, 0.02, [-1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([0.07, -0.07, 0], 0.27, 0.02, [1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
-drawArm([-0.07, -0.07, 0], 0.27, 0.02, [-1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([0.07, 0.07, 0], 0.31, 0.02, [1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([-0.07, 0.07, 0], 0.31, 0.02, [-1, 1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([0.07, -0.07, 0], 0.31, 0.02, [1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
+drawArm([-0.07, -0.07, 0], 0.31, 0.02, [-1, -1, 0], quadcopter, armColor, baseColor, armLineWidth, baseLineWidth);
 
 end
 
