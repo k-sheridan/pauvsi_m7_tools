@@ -7,7 +7,6 @@ classdef Quadcopter
         pos = [0, 0, 0]; %in meters
         velocity = [0, 0, 0]; %in m/s
         angleQuat = [1, 0, 0, 0]; %in quarternion
-        angleRad = [0, 0, 0]; % in radians
         angularVelocity = [0, 0, 0]; % in arbitrary unit
         motorForces = [0, 0, 0, 0]; % the motor forces are in newtons
         
@@ -19,6 +18,8 @@ classdef Quadcopter
         
         %Constants
         I = [1, 1, 1]; %moment of inertia for vehicle
+        M = 5; %mass of quad in kg
+        G = 9.806; %m/s/s close to G in Georgia
         %Gains
         POSITION_GAINS_P = [1, 0, 0;
                             0, 1, 0;
@@ -38,9 +39,46 @@ classdef Quadcopter
     end
     
     methods
-        % Constructor for Quadcopter
+        %% Constructor for Quadcopter
         function obj = Quadcopter(pos)
             obj.pos = pos;
+        end
+        
+        %% the run function
+        function [obj, usedRNG] = run(obj, dt, randomNumberGen)
+            %set the random number generator for repeatablilty
+            rng(randomNumberGen);
+            
+            %now perform quad updates
+            [obj, usedRNG] = obj.updateState(dt, rng);
+            %I must set the rng again now that it was used
+            rng(usedRNG);
+            
+            %save rng in its state
+            usedRNG = rng;
+        end
+        
+        %% the state updater
+        function [obj, usedRNG] = updateState(obj, dt, randomNumberGen)
+            %set the random number generator for repeatablilty
+            rng(randomNumberGen);
+            %continue on as usual
+            % the drive equations
+            F_Grav = [0, 0, -obj.M*obj.G]; % the vector of force exterted on quad by gravity
+            F_BodyFrame = [0, 0, sum(obj.motorForces)]; % vector of body frame force produced by 
+            F_InertialFrame = quatrotate(obj.angleQuat, F_BodyFrame);
+            % calculation of air drag - for now don't
+            
+            %calculate the F_net
+            F_net = F_Grav + F_InertialFrame;
+            
+            %update the current linear velocity
+            obj.velocity = obj.velocity + F_net * dt;
+            %update the current position
+            obj.pos = obj.pos + obj.velocity * dt;
+            
+            %save rng in its state
+            usedRNG = rng;
         end
     end
     
