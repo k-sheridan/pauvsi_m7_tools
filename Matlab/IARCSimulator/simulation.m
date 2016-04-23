@@ -5,14 +5,14 @@ function [ results ] = simulation( seed )
 % When working with nerual net the inputs must be accounted for
 
 GAME_TIME_LIMIT = 600; %600 seconds time limit
-GAME_DT = 0.01; %time change for game
+GAME_DT = 0.02; %time change for game
 rng(seed); %set the rng
 randomNumberGenerator = rng; %create the random number generator
 
 %Initialize game time variables
 %create the quad
 quadcopter = Quadcopter([0, 0, 2.5]);
-quadcopter.motorForces = [0, 0, 10, 0];
+quadcopter.motorForces = [20, 25, 15, 35];
 %create the roombas (1X10)
 for index = (1:1:10)
     yaw = index * pi / 5;
@@ -39,7 +39,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
     for index = (1:1:length(obstacles))
         [obstacles(index), randomNumberGenerator] = obstacles(index).run(GAME_DT, randomNumberGenerator);
     end
-    if ~mod(t,0.01)
+    if ~mod(t,0.02)
         drawSimulation(roombas, obstacles, quadcopter)
         %fprintf('Time: %f\n', t);
     end
