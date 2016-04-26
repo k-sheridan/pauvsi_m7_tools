@@ -7,8 +7,10 @@ classdef Quadcopter
         pos = [0, 0, 0]; %in meters
         velocity = [0, 0, 0]; %in m/s
         angleQuat = [1, 0, 0, 0]; %in quarternion
-        angularVelocity = [0; 0; 0]; % in arbitrary unit
+        angularVelocity = [0; 0; 0]; % in rad/s 
         motorForces = [0, 0, 0, 0]; % the motor forces are in newtons
+        
+        positionIntegral = 0; % the I in PID for position matching.
         
         Trajectory;
         trajectoryTimer = 0; % this variable will tell the quad how to fly
@@ -75,7 +77,7 @@ classdef Quadcopter
                                        D,  D, -D, -D;
                                       -C,  C, -C,  C];
             Force_Torque = TorqueTransitionMatrix * obj.motorForces'; % calculate the torque and forces
-            Torque_Body = Force_Torque(2:4) % split the torque into vec
+            Torque_Body = Force_Torque(2:4); % split the torque into vec
             Total_Force = Force_Torque(1); % total force
             
             % the drive equations
@@ -96,7 +98,6 @@ classdef Quadcopter
             %fix the torque for quat bug
             Torque_Body(1) = Torque_Body(1) * -1; % I don't know why the rotation is reversed
             obj.angularVelocity = obj.angularVelocity + (obj.I \ Torque_Body) * dt;
-            obj.angularVelocity
             
             %update the quaternion with omega
             deltaAng = eul2quat(wrev(obj.angularVelocity') * dt);

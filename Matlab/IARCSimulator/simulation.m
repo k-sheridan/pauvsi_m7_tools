@@ -6,13 +6,14 @@ function [ results ] = simulation( seed )
 
 GAME_TIME_LIMIT = 600; %600 seconds time limit
 GAME_DT = 0.02; %time change for game
+ROOMBA_DT = 0.1;
 rng(seed); %set the rng
 randomNumberGenerator = rng; %create the random number generator
 
 %Initialize game time variables
 %create the quad
 quadcopter = Quadcopter([0, 0, 2.5]);
-quadcopter.motorForces = [20, 25, 15, 35];
+quadcopter.motorForces = [12.5, 12.5, 12.5, 12.5];
 %create the roombas (1X10)
 for index = (1:1:10)
     yaw = index * pi / 5;
@@ -25,21 +26,22 @@ for index = (1:1:4)
 end
 %start the game
 for t = (0:GAME_DT:GAME_TIME_LIMIT)
-    %collide all robots
-    [roombas, obstacles] = collideGroundRobots(roombas, obstacles);
-    
     %run the quad and pass rng
     [quadcopter, randomNumberGenerator] = quadcopter.run(GAME_DT, randomNumberGenerator);
     
-    %run roombas and pass back the rng
-    for index = (1:1:length(roombas))
-        [roombas(index), randomNumberGenerator] = roombas(index).run(GAME_DT, randomNumberGenerator);
+    if ~mod(t, ROOMBA_DT)
+        %collide all robots
+        [roombas, obstacles] = collideGroundRobots(roombas, obstacles);
+        %run roombas and pass back the rng
+        for index = (1:1:length(roombas))
+            [roombas(index), randomNumberGenerator] = roombas(index).run(GAME_DT, randomNumberGenerator);
+        end
+        %run the obstacles
+        for index = (1:1:length(obstacles))
+            [obstacles(index), randomNumberGenerator] = obstacles(index).run(GAME_DT, randomNumberGenerator);
+        end
     end
-    %run the obstacles
-    for index = (1:1:length(obstacles))
-        [obstacles(index), randomNumberGenerator] = obstacles(index).run(GAME_DT, randomNumberGenerator);
-    end
-    if ~mod(t,0.02)
+    if ~mod(t,0.1)
         drawSimulation(roombas, obstacles, quadcopter)
         %fprintf('Time: %f\n', t);
     end

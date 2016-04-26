@@ -8,6 +8,7 @@ cla
 %create gorund markings
 hold on
 axis([-11 11 -11 11 0 10]); % setup axes
+daspect([1,1,1])
 plot3([-10, 10], [-10, -10], [0, 0], 'r')
 plot3([-10, 10], [10, 10], [0, 0], 'g')
 plot3([-10, -10], [-10, 10], [0, 0], 'k')
