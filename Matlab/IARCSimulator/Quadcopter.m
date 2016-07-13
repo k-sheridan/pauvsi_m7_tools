@@ -107,6 +107,26 @@ classdef Quadcopter
             %save rng in its state
             usedRNG = rng;
         end
+        
+        %% sense position
+        function [sensePos] = sensePosition(obj)
+            sensePos = obj.pos;
+        end
+        
+        %% sense velocity
+        function [senseVel] = senseVelocity(obj)
+            senseVel = obj.velocity;
+        end
+        
+        %% sense angle quaternion
+        function [senseQuat] = senseAngle(obj)
+            senseQuat = obj.angleQuat;
+        end
+        
+        %% sense angluar velocity
+        function [senseOmega] = senseAngularVelocity(obj)
+            senseOmega = obj.angularVelocity;
+        end
     end
     
 end
