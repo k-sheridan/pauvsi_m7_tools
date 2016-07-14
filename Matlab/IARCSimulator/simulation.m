@@ -13,7 +13,7 @@ randomNumberGenerator = rng; %create the random number generator
 %Initialize game time variables
 %create the quad
 quadcopter = Quadcopter([0, 0, 2.5]);
-%quadcopter.motorForces = [12.5, 12.5, 12.5, 12.5];
+quadcopter.motorForces = [13, 12.5, 12.5, 12.5];
 %create the roombas (1X10)
 for index = (1:1:10)
     yaw = index * pi / 5;
@@ -27,6 +27,7 @@ end
 %start the game
 for t = (0:GAME_DT:GAME_TIME_LIMIT)
     %run the quad and pass rng
+    if ~mod(t, ROOMBA_DT)
     [quadcopter, randomNumberGenerator] = quadcopter.run(GAME_DT, randomNumberGenerator);
     
     if ~mod(t, ROOMBA_DT)
@@ -41,7 +42,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
             [obstacles(index), randomNumberGenerator] = obstacles(index).run(GAME_DT, randomNumberGenerator);
         end
     end
-    if ~mod(t,0.1)
+    if ~mod(t,0.5)
         drawSimulation(roombas, obstacles, quadcopter)
         %fprintf('Time: %f\n', t);
     end
