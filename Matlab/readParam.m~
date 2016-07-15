@@ -1,0 +1,23 @@
+function [ paramVal ] = readParam( fileName, paramName )
+%READPARAM Summary of this function goes here
+%   This function will read a file for the requested parameter. This will
+%   be useful when I forget how this code works and need to modify its
+%   function
+t = readtable('SimulationParams.txt', 'Delimiter', '-', 'ReadVariableNames', false)
+vals = table2array()
+
+flag = 0;
+
+for it = (1:1:length(t(:, 1)))
+    if strcmp(paramName, strcat(t(it, 1)))
+        paramVal = t(it, 2);
+        flag = 1;
+    end
+end
+
+if ~flag
+    error('readParam: no matching parameter for %s', paramName);
+end
+
+end
+

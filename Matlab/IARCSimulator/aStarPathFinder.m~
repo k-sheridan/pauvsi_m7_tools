@@ -1,0 +1,7 @@
+function [ waypoints ] = aStarPathFinder( field, startNode, goalNode )
+%ASTARPATHFINDER Summary of this function goes here
+%   calculates the waypoints to get to a goal position
+openList = []
+
+end
+
