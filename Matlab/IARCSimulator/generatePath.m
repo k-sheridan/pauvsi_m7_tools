@@ -13,8 +13,11 @@ timeToArrival = ROOMBA_PREDICT * dist % simple linear prediction
 %position
 goalPos = targetPos + (targetVel * timeToArrival) %this is the goal pos
 
-%now we must create the image 
+%now we must create the image
 aStarField = zeros(ASTAR_DIM, ASTAR_DIM);
+
+obstaclePath = [0, 0, 0];
+targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM)
 
 %draw the trail that obstacles will make
 for it = (1:1:length(obstacles))
@@ -23,24 +26,46 @@ for it = (1:1:length(obstacles))
         obstacles(it).pos = obstacles(it).pos + (obstacles(it).FORWARD_VELOCITY * [cos(obstacles(it).yaw), sin(obstacles(it).yaw), 0] * 0.25);
         arrayPos = realPos2AStarPos(obstacles(it).pos, ASTAR_DIM);
         aStarField(arrayPos(1), arrayPos(2)) = 255;
+        obstaclePath(t * 4 + 1, :) = obstacles(it).pos();
         
         %now we must build out this pixel by the specified amount
         for dist = (1:1:BUILD_OUT_LENGTH)
-            %first top to bottom 
+            %first top to bottom
             for pos = (arrayPos(1) - dist:1:arrayPos(1) + dist)
                 aStarField(pos, arrayPos(2) + dist) = 255;
                 aStarField(pos, arrayPos(2) - dist) = 255;
             end
-            %first left to right 
+            %first left to right
             for pos = (arrayPos(2) - dist:1:arrayPos(2) + dist)
                 aStarField(arrayPos(1) + dist, pos) = 255;
                 aStarField(arrayPos(1) - dist, pos) = 255;
             end
         end
     end
+    
+    %now check if thw target position is inside
+    if aStarField(targetAStarPos(1), targetAStarPos(2)) == 255
+        %we must move it away from the obstacle
+        %first find the closest point
+        [m, ~] = size(obstaclePath);
+        closestPointIndex = 1;
+        for it = (1:1:m)
+            if norm(obstaclePath(it, :) - targetPos) < norm(obstaclePath(closestPointIndex, :) - targetPos)
+                closestPointIndex = it;
+            end    
+        end
+        
+        %find the best point for the goal pos
+        obstaclePath(closestPointIndex)
+        unitVec = (targetPos - obstaclePath(closestPointIndex)) / norm((targetPos - obstaclePath(closestPointIndex)))
+        newTargetPos = (unitVec * ((BUILD_OUT_LENGTH + 1) / ASTAR_DIM) * 20) + obstaclePath(closestPointIndex)
+        targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM)
+    end
 end
 
+aStarField(targetAStarPos(1), targetAStarPos(2)) = 20;
 image(aStarField);
+colorbar;
 
 end
 

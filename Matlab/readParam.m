@@ -11,7 +11,7 @@ function [ paramVal ] = readParam( fileName, paramName )
 %       ...
 
 %parse the data from txt file
-t = readtable(fileName, 'Delimiter', '#', 'ReadVariableNames', false)
+t = readtable(fileName, 'Delimiter', '#', 'ReadVariableNames', false);
 vals = table2array(t(:, 2));
 vars = table2array(t(:, 1));
 
