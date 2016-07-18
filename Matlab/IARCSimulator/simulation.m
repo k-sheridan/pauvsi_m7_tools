@@ -4,7 +4,7 @@ function [ results ] = simulation( seed )
 % PROGRAMATIC RULES: coordinate system ([-10, 10], [-10, 10])
 % When working with nerual net the inputs must be accounted for
 
-GAME_TIME_LIMIT = 600; %600 seconds time limit
+GAME_TIME_LIMIT = 1; %600 seconds time limit
 GAME_DT = 0.02; %time change for game
 ROOMBA_DT = 0.1;
 rng(seed); %set the rng
@@ -27,7 +27,6 @@ end
 %start the game
 for t = (0:GAME_DT:GAME_TIME_LIMIT)
     %run the quad and pass rng
-    if ~mod(t, ROOMBA_DT)
     [quadcopter, randomNumberGenerator] = quadcopter.run(GAME_DT, randomNumberGenerator);
     
     if ~mod(t, ROOMBA_DT)
@@ -47,6 +46,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
         %fprintf('Time: %f\n', t);
     end
     %pause(0.1);
+    %results = obstacles;
 end
 end
 

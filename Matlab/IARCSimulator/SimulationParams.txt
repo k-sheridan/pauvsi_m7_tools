@@ -1,5 +1,8 @@
 VARIABLE-VALUE-UNIT
-quadMass      -5-   kg
-quadLength    -800- mm
-quadWidth     -800- mm
-maxVelocity   -10-  m/s
+quadMass                #5#   kg
+quadLength              #800# mm
+quadWidth               #800# mm
+maxVelocity             #10#  m/s
+aStarResolution         #200# p/20m
+roombaPosPredictConst   #0.5# s/m (used to predict the intercept point)
+aStarBuildOutLength     #10#   p (the amount of pixels from the obstacle robot)

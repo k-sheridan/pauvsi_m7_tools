@@ -1,5 +1,6 @@
 VARIABLE-VALUE-UNIT
-quadMass-5-kg
-quadLength-800-mm
-quadWidth -800-mm
-maxVelocity 10  m/s
+quadMass      -5-   kg
+quadLength    -800- mm
+quadWidth     -800- mm
+maxVelocity       -10-  m/s
+aStarResolution
