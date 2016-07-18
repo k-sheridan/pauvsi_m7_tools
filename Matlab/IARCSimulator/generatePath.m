@@ -18,6 +18,7 @@ aStarField = zeros(ASTAR_DIM, ASTAR_DIM);
 
 obstaclePath = [0, 0, 0];
 targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM)
+oldTargetPos = targetAStarPos;
 
 %draw the trail that obstacles will make
 for it = (1:1:length(obstacles))
@@ -54,16 +55,15 @@ for it = (1:1:length(obstacles))
                 closestPointIndex = it;
             end    
         end
-        
         %find the best point for the goal pos
-        obstaclePath(closestPointIndex)
-        unitVec = (targetPos - obstaclePath(closestPointIndex)) / norm((targetPos - obstaclePath(closestPointIndex)))
-        newTargetPos = (unitVec * ((BUILD_OUT_LENGTH + 1) / ASTAR_DIM) * 20) + obstaclePath(closestPointIndex)
+        unitVec = (targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)))
+        newTargetPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2)
         targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM)
     end
 end
 
-aStarField(targetAStarPos(1), targetAStarPos(2)) = 20;
+aStarField(oldTargetPos(1), oldTargetPos(2)) = 20;
+aStarField(targetAStarPos(1), targetAStarPos(2)) = 40;
 image(aStarField);
 colorbar;
 
