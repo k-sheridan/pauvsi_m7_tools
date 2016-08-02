@@ -17,7 +17,15 @@ goalPos = targetPos + (targetVel * timeToArrival) %this is the goal pos
 aStarField = zeros(ASTAR_DIM, ASTAR_DIM);
 
 obstaclePath = [0, 0, 0];
-targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM)
+targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM);
+oldTargetPos = targetAStarPos;
+
+%where is the quad in astar space
+quadAStarPos = realPos2AStarPos(quad.pos, ASTAR_DIM);
+
+%these are for if the quad is in the obstacle field
+quadObsFlag = 0;
+firstWaypoint;
 
 %draw the trail that obstacles will make
 for it = (1:1:length(obstacles))
@@ -54,15 +62,33 @@ for it = (1:1:length(obstacles))
                 closestPointIndex = it;
             end    
         end
-        
         %find the best point for the goal pos
-        obstaclePath(closestPointIndex)
-        targetPos
-        unitVec = (targetPos - obstaclePath(closestPointIndex)) / norm((targetPos - obstaclePath(closestPointIndex)))
+        unitVec = (targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)))
+        newTargetPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2)
+        targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM)
+    end
+    
+    %now check the quads pos
+    if aStarField(quadAStarPos(1), quadAStarPos(2)) == 255
+         %we must move it away from the obstacle
+        %first find the closest point
+        [m, ~] = size(obstaclePath);
+        closestPointIndex = 1;
+        for it = (1:1:m)
+            if norm(obstaclePath(it, :) - quad.pos) < norm(obstaclePath(closestPointIndex, :) - quad.pos)
+                closestPointIndex = it;
+            end    
+        end
+        %find the best point for the first waypoint
+        unitVec = (targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((quad.pos(1:2) - obstaclePath(closestPointIndex, 1:2)))
+        newTargetPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2)
+        targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM)
     end
 end
 
-aStarField(targetAStarPos(1), targetAStarPos(2)) = 20;
+aStarField(oldTargetPos(1), oldTargetPos(2)) = 20;
+aStarField(targetAStarPos(1), targetAStarPos(2)) = 40;
+aStarField(quadAStarPos(1), quadAStarPos(2)) = 10;
 image(aStarField);
 colorbar;
 

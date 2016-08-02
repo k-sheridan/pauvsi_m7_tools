@@ -17,8 +17,19 @@ goalPos = targetPos + (targetVel * timeToArrival) %this is the goal pos
 aStarField = zeros(ASTAR_DIM, ASTAR_DIM);
 
 obstaclePath = [0, 0, 0];
-targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM)
+targetAStarPos = realPos2AStarPos(targetPos, ASTAR_DIM);
 oldTargetPos = targetAStarPos;
+
+%where is the quad in astar space
+quadAStarPos = realPos2AStarPos(quad.pos, ASTAR_DIM);
+
+%these are for if the quad is in the obstacle field
+quadObsFlag = 0;
+firstWaypoint = [0, 0];
+
+%functional variables for this section.
+extrapolatedTarget = 0;
+extrapolatedQuad = 0;
 
 %draw the trail that obstacles will make
 for it = (1:1:length(obstacles))
@@ -45,7 +56,7 @@ for it = (1:1:length(obstacles))
     end
     
     %now check if thw target position is inside
-    if aStarField(targetAStarPos(1), targetAStarPos(2)) == 255
+    if aStarField(targetAStarPos(1), targetAStarPos(2)) == 255 && ~extrapolatedTarget
         %we must move it away from the obstacle
         %first find the closest point
         [m, ~] = size(obstaclePath);
@@ -56,14 +67,38 @@ for it = (1:1:length(obstacles))
             end    
         end
         %find the best point for the goal pos
-        unitVec = (targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)))
-        newTargetPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2)
-        targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM)
+        unitVec = (targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((targetPos(1:2) - obstaclePath(closestPointIndex, 1:2)));
+        newTargetPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2);
+        targetAStarPos = realPos2AStarPos(newTargetPos, ASTAR_DIM);
+        
+        extrapolatedTarget = 1;
+    end
+    
+    %now check the quads pos
+    if aStarField(quadAStarPos(1), quadAStarPos(2)) == 255 && ~extrapolatedQuad
+         %we must move it away from the obstacle
+        %first find the closest point
+        [m, ~] = size(obstaclePath);
+        closestPointIndex = 1;
+        for it = (1:1:m)
+            if norm(obstaclePath(it, :) - quad.pos) < norm(obstaclePath(closestPointIndex, :) - quad.pos)
+                closestPointIndex = it;
+            end    
+        end
+        %find the best point for the first waypoint
+        unitVec = (quad.pos(1:2) - obstaclePath(closestPointIndex, 1:2)) / norm((quad.pos(1:2) - obstaclePath(closestPointIndex, 1:2)));
+        waypointPos = (((BUILD_OUT_LENGTH + 1) / ASTAR_DIM * 20) * unitVec) + obstaclePath(closestPointIndex, 1:2);
+        firstWaypoint = realPos2AStarPos(waypointPos, ASTAR_DIM);
+        
+        quadObsFlag = 1;
+        extrapolatedQuad = 1;
     end
 end
 
 aStarField(oldTargetPos(1), oldTargetPos(2)) = 20;
 aStarField(targetAStarPos(1), targetAStarPos(2)) = 40;
+aStarField(quadAStarPos(1), quadAStarPos(2)) = 10;
+aStarField(firstWaypoint(1), firstWaypoint(2)) = 40;
 image(aStarField);
 colorbar;
 

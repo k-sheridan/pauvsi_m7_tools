@@ -46,7 +46,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
         %fprintf('Time: %f\n', t);
     end
     %pause(0.1);
-    %results = obstacles;
+    %results = quadcopter;
 end
 end
 
