@@ -23,12 +23,12 @@ obsDT = 0.25; %Timestep of Obstacles
 closeThresholdCoeff = 1.2; % multiplier for whether a target or quad is too close to obstacle
 
 %Instantiate the map
-map = robotics.BinaryOccupancyGrid(20, 20,  MAP_RES)
+map = robotics.BinaryOccupancyGrid(20, 20,  MAP_RES);
 map.GridLocationInWorld = [-10, -10];
 
 %Instantiate the start and end positions
 startLocation = quad.pos(1:2);
-endLocation = targetPos;
+endLocation = targetPos(1:2);
 
 % setup flags
 quadMoveFlag = 0; % flag indicating if quad must be moved
@@ -55,14 +55,14 @@ for it = (1:1:length(obstacles))
         setOccupancy(map, obstacles(it).pos(1:2), 1);
         
         %check if quad is too close to obstacle pos
-        if ~quadMoveFlag && norm(quad.pos(1:2) - obstacles(it).pos(1:2)) < MAP_RES * closeThresholdCoeff
+        if ~quadMoveFlag && norm(quad.pos(1:2) - obstacles(it).pos(1:2)) < MAP_RADIUS * closeThresholdCoeff
         
             quadMoveFlag = 1;
         
         end
         
         %check if target is too close to obstacle pos
-        if ~targetMoveFlag && norm(targetPos(1:2) - obstacles(it).pos(1:2)) < MAP_RA * closeThresholdCoeff
+        if ~targetMoveFlag && norm(targetPos(1:2) - obstacles(it).pos(1:2)) < MAP_RADIUS * closeThresholdCoeff
             
             targetMoveFlag = 1;
         
@@ -85,7 +85,7 @@ for it = (1:1:length(obstacles))
         unitVec = (quad.pos(1:2) - obstaclePath(closestObsPosIndex, 1:2)) / norm((quad.pos(1:2) - obstaclePath(closestObsPosIndex, 1:2)));
         startLocation = (unitVec * MAP_RADIUS * closeThresholdCoeff) + quad.pos(1:2);
         
-        sprintf('MOVING START TO [%f, %f]\n', startLocation(1), startLocation(2))
+        fprintf('MOVING START TO [%f, %f]\n', startLocation(1), startLocation(2));
         
     end
     
@@ -104,7 +104,7 @@ for it = (1:1:length(obstacles))
         unitVec = (targetPos(1:2) - obstaclePath(closestObsPosIndex, 1:2)) / norm((targetPos(1:2) - obstaclePath(closestObsPosIndex, 1:2)));
         endLocation = (unitVec * MAP_RADIUS * closeThresholdCoeff) + targetPos(1:2);
         
-        sprintf('MOVING END TO [%f, %f]\n', endLocation(1), endLocation(2))
+        fprintf('MOVING END TO [%f, %f]\n', endLocation(1), endLocation(2));
         
     end
 end
@@ -121,11 +121,88 @@ prm.NumNodes = 200;
 prm.ConnectionDistance = 5;
 
 %update the prm map
-update(prm)
+update(prm);
 
 %find the path and set it to Waypoints
-PRMPath = findpath(prm, startLocation, endLocation)
+PRMPath = findpath(prm, startLocation, endLocation);
 
+%set up the X and Y portions of the Waypoints
+if quad.pos(1:2) ~= startLocation % if the quad pos and start are not the same
+    
+    Waypoints(1, 1:2) = quad.pos(1:2);
+    [m, ~] = size(PRMPath);
+    Waypoints(2:(m+1), 1:2) = PRMPath;
+    
+    %attach the target position if it is not already
+    if targetPos(1:2) ~= endLocation
+        
+        [m, ~] = size(Waypoints);
+        Waypoints(m + 1, 1:2) = targetPos(1:2);
+        
+    end
+else
+    Waypoints = PRMPath;
+    
+    %attach the target position if it is not already
+    if targetPos(1:2) ~= endLocation
+        
+        [m, ~] = size(Waypoints);
+        Waypoints(m + 1, 1:2) = targetPos(1:2);
+        
+    end
+end
+
+%%CREATE Z COORDINATES FOR EACH WAYPOINT AND ITS VELOCITY
+
+[m, ~] = size(Waypoints);
+CRUISING_ALT = readParam('SimulationParams.txt', 'cruisingAltitude');
+TOUCH_ALT = readParam('SimulationParams.txt', 'touchHeight');
+% Assign a Z coordinate for each waypoint
+for index = (1:1:m)
+    % at first waypoint set z to current z
+    if index == 1 
+        
+        Waypoints(index, 3) = quad.pos(3);
+        
+    % at second point if it is close to obstacle
+    elseif index == 2 & quad.pos(1:2) ~= startLocation(1:2)
+        if quad.pos(3) < TOUCH_ALT
+            Waypoints(index, 3) = TOUCH_ALT;
+        else
+            Waypoints(index, 3) = quad.pos(3);
+        end
+    % last point must be Touching alt
+    elseif index == m
+        Waypoints(index, 3) = TOUCH_ALT;
+    else % all other points should be cruising
+        Waypoints(index, 3) = CRUISING_ALT;
+    end
+end
+
+%now create the velocities for each waypoint
+
+SPEED_UP_DIST = readParam('SimulationParams.txt', 'speedUpDistance');
+SLOW_DOWN_DIST = readParam('SimulationParams.txt', 'slowDownDistance');
+MAX_VELOCITY = readParam('SimulationParams.txt', 'maxVelocity');
+
+[m, ~] = size(Waypoints);
+
+%first calculate the total path distance
+pathDistance = 0;
+for index = (2:1:m)
+    pathDistance = pathDistance + norm(Waypoints(index, 1:3) - Waypoints(index - 1, 1:3));
+end
+
+%check to see if the path is too short to speed up all the way
+if SPEED_UP_DIST + SLOW_DOWN_DIST < pathDistance % use pathDistance / 2
+    
+else
+    % run through and set all velocties
+
+    for index = (1:1:m)
+    end
+end
+    
 %%DRAWING
 
 figure(2);
@@ -135,6 +212,7 @@ plot(targetPos(1), targetPos(2), '*b', 'MarkerSize',10);
 plot(quad.pos(1), quad.pos(2), '*g', 'MarkerSize', 10);
 plot(startLocation(1), startLocation(2), 'xg', 'MarkerSize', 10);
 plot(endLocation(1), endLocation(2), 'xr', 'MarkerSize', 10);
+plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), '-r', 'LineWidth', 2);
 
 legend('PRM Path', 'PRM Node', 'PATH', 'OriginalTargetPos','OriginalQuadPos','Starting Pos', 'Ending Pos');
 hold off
