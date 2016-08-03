@@ -6,3 +6,5 @@ maxVelocity             #10#  m/s
 aStarResolution         #200# p/20m
 roombaPosPredictConst   #0.5# s/m (used to predict the intercept point)
 aStarBuildOutLength     #5#   p (the amount of pixels from the obstacle robot)
+mapRadius             #0.75# m (the build out for the Path finding map)
+mapRes                #10#  p / m (pixels per meter of V2 map)

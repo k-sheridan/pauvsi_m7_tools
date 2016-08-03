@@ -3,6 +3,8 @@ function [] = drawSimulation(roombas, obstacles, quadcopter)
 % The purpose of this function is too actually draw the field and GUI and
 % report back vital GUI related information
 %   roombas: 1X10 Vector of roombas
+%set figure
+figure(1);
 %begin drawing
 cla
 %create gorund markings

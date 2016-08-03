@@ -11,8 +11,13 @@ classdef aStarNode
     end
     
     methods
-        function obj = aStarNode(pos)
-            obj.pos = pos;
+        function obj = aStarNode(pos, parentPos)
+            if nargin == 1
+                obj.pos = pos;
+            elseif nargin == 2
+                obj.pos = pos;
+                obj.parentPos = parentPos;
+            end
         end
     end
     
