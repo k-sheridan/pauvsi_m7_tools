@@ -1,5 +1,11 @@
 VARIABLE-VALUE-UNIT
 quadMass                #5#   kg
+quadMomentX             #1.5#
+quadMomentY             #1.5#
+quadMomentZ             #1#
+quadMinZForce           #-45#   N
+quadMaxForce            #100#   N
+quadMaxAngle            #0.5236# Radians
 quadLength              #800# mm
 quadWidth               #800# mm
 maxVelocity             #10#  m/s
@@ -10,5 +16,5 @@ mapRadius             #0.75# m (the build out for the Path finding map)
 mapRes                #10#  p / m (pixels per meter of V2 map)
 touchHeight           #0.5# m (the height at which the quad will initiate touching of )
 cruisingAltitude      #2.5# m (the altitude that the quad flys at typically)
-slowDownDistance      #5# m   (the distance that the speed of each way point gradually slows linearly)
-speed
+slowDownDistance      #15# m   (the distance that the speed of each way point gradually slows linearly)
+speedUpDistance       #15# m   (the distance it takes to reach max speed)

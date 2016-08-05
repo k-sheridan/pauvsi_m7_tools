@@ -254,9 +254,40 @@ else
 end
 
 %%NOW PLUG THE WAY POINT AND VELOCITIES INTO THE TRAJ GEN ALGORITHM
-startConstra
 
-    
+[m, ~] = size(Waypoints);%size of waypoints
+
+%the start constraint of traj gen
+startConstraint = [Waypoints(1, 1), WaypointVelocities(1, 1), 0, 0, 0;
+                   Waypoints(1, 2), WaypointVelocities(1, 2), 0, 0, 0;
+                   Waypoints(1, 3), WaypointVelocities(1, 3), 0, 0, 0;];
+%the end constraint of traj gen           
+endConstraint = [Waypoints(m, 1), WaypointVelocities(m, 1), 0, 0, 0;
+                 Waypoints(m, 2), WaypointVelocities(m, 2), 0, 0, 0;
+                 Waypoints(m, 3), WaypointVelocities(m, 3), 0, 0, 0;];
+%the mid constraint of traj gen 
+midConstraint = [];
+if m > 2
+    midConstraint = zeros(6, m - 2);
+    for index = (1:1:(m - 2))
+        midConstraint(1:6, index) = [Waypoints(index + 1, 1); 
+                                     Waypoints(index + 1, 2);
+                                     Waypoints(index + 1, 3);
+                                     WaypointVelocities(index + 1, 1);
+                                     WaypointVelocities(index + 1, 2);
+                                     WaypointVelocities(index + 1, 3);];
+    end
+end
+
+%startConstraint
+%midConstraint
+%endConstraint
+
+QUAD_MASS = readParam('SimulationParams.txt', 'quadMass');
+QUAD_MOMENT = [readParam('SimulationParams.txt', 'quadMomentX'), readParam('SimulationParams.txt', 'quadMomentY'), readParam('SimulationParams.txt', 'quadMomentZ')];
+QUAD_MI    
+
+
 %%DRAWING
 
 figure(2);

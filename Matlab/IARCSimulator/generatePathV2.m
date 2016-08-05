@@ -1,4 +1,4 @@
-function [ Trajectory, Waypoints, prm ] = generatePathV2( targetPos, targetVel, quad,  obstacles, prm )
+function [ Trajectory, Waypoints, TotalFlightTime, prm ] = generatePathV2( targetPos, targetVel, quad,  obstacles, prm )
 %GENERATEPATHV2 Summary 
 %   This function will create a set of waypoints and trajectory which will
 %   fly the aircraft to its goal.
@@ -117,8 +117,8 @@ inflate(map, MAP_RADIUS);
 %setup prm
 prm = robotics.PRM;
 prm.Map = map;
-prm.NumNodes = 200;
-prm.ConnectionDistance = 5;
+prm.NumNodes = readParam('SimulationParams.txt', 'prmNodeCount');
+prm.ConnectionDistance = readParam('SimulationParams.txt', 'prmNodeConnectionDist');
 
 %update the prm map
 update(prm);
@@ -183,7 +183,7 @@ end
 
 SPEED_UP_DIST = readParam('SimulationParams.txt', 'speedUpDistance');
 SLOW_DOWN_DIST = readParam('SimulationParams.txt', 'slowDownDistance');
-MAX_VELOCITY = readParam('SimulationParams.txt', 'maxVelocity');
+MAX_VELOCITY = readParam('SimulationParams.txt', 'maxWaypointVelocity');
 
 [m, ~] = size(Waypoints);
 WaypointVelocities = zeros(m, 3);
@@ -265,10 +265,34 @@ startConstraint = [Waypoints(1, 1), WaypointVelocities(1, 1), 0, 0, 0;
 endConstraint = [Waypoints(m, 1), WaypointVelocities(m, 1), 0, 0, 0;
                  Waypoints(m, 2), WaypointVelocities(m, 2), 0, 0, 0;
                  Waypoints(m, 3), WaypointVelocities(m, 3), 0, 0, 0;];
-%the mid constraint of traj gen             
+%the mid constraint of traj gen 
+midConstraint = [];
 if m > 2
+    midConstraint = zeros(6, m - 2);
+    for index = (1:1:(m - 2))
+        midConstraint(1:6, index) = [Waypoints(index + 1, 1); 
+                                     Waypoints(index + 1, 2);
+                                     Waypoints(index + 1, 3);
+                                     WaypointVelocities(index + 1, 1);
+                                     WaypointVelocities(index + 1, 2);
+                                     WaypointVelocities(index + 1, 3);];
+    end
 end
-    
+
+%startConstraint
+%midConstraint
+%endConstraint
+
+QUAD_MASS = readParam('SimulationParams.txt', 'quadMass');
+QUAD_MOMENT = [readParam('SimulationParams.txt', 'quadMomentX'), readParam('SimulationParams.txt', 'quadMomentY'), readParam('SimulationParams.txt', 'quadMomentZ')];
+QUAD_MIN_Z_FORCE = readParam('SimulationParams.txt', 'quadMinZForce');
+QUAD_MAX_FORCE = readParam('SimulationParams.txt', 'quadMaxForce');
+QUAD_MAX_ANGLE = readParam('SimulationParams.txt', 'quadMaxAngle');
+QUAD_MAX_VELOCITY = readParam('SimulationParams.txt', 'maxVelocity');
+
+%%GENRATE THE TRAJECTORY FAM
+[Trajectory, TotalFlightTime] = minimumTimeTrajectoryGenerator(startConstraint, midConstraint, endConstraint, 'VEL', QUAD_MASS, QUAD_MOMENT, QUAD_MAX_VELOCITY, QUAD_MIN_Z_FORCE, QUAD_MAX_FORCE, QUAD_MAX_ANGLE);
+
 %%DRAWING
 
 figure(2);
@@ -281,6 +305,15 @@ plot(endLocation(1), endLocation(2), 'xr', 'MarkerSize', 10);
 plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), '-r', 'LineWidth', 2);
 
 legend('PRM Path', 'PRM Node', 'PATH', 'OriginalTargetPos','OriginalQuadPos','Starting Pos', 'Ending Pos');
+%hold off
+
+%Plot the Trajectory
+figure(2)
+[p1, p2] = trajectoryPlotter(Trajectory);    
+%daspect([20 20 5])
+%axis([-1 11 -1 11 -10 10])
+%hold on
+arrow3(p1, p2, 'b', 0.4)
 hold off
 end
 
