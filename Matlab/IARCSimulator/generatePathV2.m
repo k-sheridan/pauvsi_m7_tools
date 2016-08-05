@@ -255,7 +255,19 @@ end
 
 %%NOW PLUG THE WAY POINT AND VELOCITIES INTO THE TRAJ GEN ALGORITHM
 
+[m, ~] = size(Waypoints);%size of waypoints
 
+%the start constraint of traj gen
+startConstraint = [Waypoints(1, 1), WaypointVelocities(1, 1), 0, 0, 0;
+                   Waypoints(1, 2), WaypointVelocities(1, 2), 0, 0, 0;
+                   Waypoints(1, 3), WaypointVelocities(1, 3), 0, 0, 0;];
+%the end constraint of traj gen           
+endConstraint = [Waypoints(m, 1), WaypointVelocities(m, 1), 0, 0, 0;
+                 Waypoints(m, 2), WaypointVelocities(m, 2), 0, 0, 0;
+                 Waypoints(m, 3), WaypointVelocities(m, 3), 0, 0, 0;];
+%the mid constraint of traj gen             
+if m > 2
+end
     
 %%DRAWING
 

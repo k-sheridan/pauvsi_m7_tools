@@ -1,5 +1,8 @@
 VARIABLE-VALUE-UNIT
 quadMass                #5#   kg
+quadMomentX             #1#
+quadMomentY             #1#
+quadMomentZ             #1#
 quadLength              #800# mm
 quadWidth               #800# mm
 maxVelocity             #10#  m/s

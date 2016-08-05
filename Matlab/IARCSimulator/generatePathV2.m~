@@ -195,18 +195,67 @@ for index = (2:1:m)
 end
 
 %check to see if the path is too short to speed up all the way
-if SPEED_UP_DIST + SLOW_DOWN_DIST < pathDistance % use pathDistance / 2
-    
+if SPEED_UP_DIST + SLOW_DOWN_DIST < pathDistance % use (pathDistance / 2)
+    % run through and set all velocties
+    currentDist = 0;
+    for index = (1:1:m)
+        
+        %if not index 1 add the distance
+        if index ~= 1
+            currentDist = currentDist + norm(Waypoints(index, 1:3) - Waypoints(index - 1, 1:3));
+        end
+        
+        if index == 1
+            WaypointVelocities(index, 1:3) = quad.velocity;
+        elseif index == m
+            WaypointVelocities(index, 1:3) = [0, 0, 0];
+        else
+            %calculate unit vector for velocity
+            unitVec = (Waypoints(index + 1, 1:3) - Waypoints(index, 1:3)) / norm(Waypoints(index + 1, 1:3) - Waypoints(index, 1:3));
+            
+            if currentDist <= (pathDistance / 2)
+                WaypointVelocities(index, 1:3) = ((currentDist / (pathDistance / 2)) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity)) * unitVec;
+            elseif pathDistance - currentDist < (pathDistance / 2)
+                WaypointVelocities(index, 1:3) = (((pathDistance - currentDist) / (pathDistance / 2)) * (MAX_VELOCITY)) * unitVec;
+            else
+                WaypointVelocities(index, 1:3) = MAX_VELOCITY * unitVec;
+            end
+        end
+        
+    end
 else
     % run through and set all velocties
     currentDist = 0;
     for index = (1:1:m)
+        
+        %if not index 1 add the distance
+        if index ~= 1
+            currentDist = currentDist + norm(Waypoints(index, 1:3) - Waypoints(index - 1, 1:3));
+        end
+        
         if index == 1
             WaypointVelocities(index, 1:3) = quad.velocity;
-        elseif 
+        elseif index == m
+            WaypointVelocities(index, 1:3) = [0, 0, 0];
+        else
+            %calculate unit vector for velocity
+            unitVec = (Waypoints(index + 1, 1:3) - Waypoints(index, 1:3)) / norm(Waypoints(index + 1, 1:3) - Waypoints(index, 1:3));
+            
+            if currentDist < SPEED_UP_DIST
+                WaypointVelocities(index, 1:3) = ((currentDist / SPEED_UP_DIST) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity)) * unitVec;
+            elseif pathDistance - currentDist < SLOW_DOWN_DIST
+                WaypointVelocities(index, 1:3) = (((pathDistance - currentDist) / SLOW_DOWN_DIST) * (MAX_VELOCITY)) * unitVec;
+            else
+                WaypointVelocities(index, 1:3) = MAX_VELOCITY * unitVec;
+            end
         end
+        
     end
 end
+
+%%NOW PLUG THE WAY POINT AND VELOCITIES INTO THE TRAJ GEN ALGORITHM
+startConstra
+
     
 %%DRAWING
 
