@@ -210,15 +210,35 @@ if SPEED_UP_DIST + SLOW_DOWN_DIST < pathDistance % use (pathDistance / 2)
         elseif index == m
             WaypointVelocities(index, 1:3) = [0, 0, 0];
         else
-            %calculate unit vector for velocity
-            unitVec = (Waypoints(index + 1, 1:3) - Waypoints(index, 1:3)) / norm(Waypoints(index + 1, 1:3) - Waypoints(index, 1:3));
+            %calculate unit vector for velocity this is the vector that
+            %interpolates the two vectors around it
+            vec1 = Waypoints(index, 1:3) - Waypoints(index - 1, 1:3);
+            vec2 = Waypoints(index + 1, 1:3) - Waypoints(index, 1:3);
+            %interpolate the vector evenly. Give BIAS in the future if you
+            %want. this could be proportional to the length
+            vec1Bias = norm(vec1) / (norm(vec1) + norm(vec2));
+            vec2Bias = 1 - vec1Bias;
+            interpolatedVec = (vec1Bias * vec1) + (vec2Bias * vec2);
+            %interpolatedVec = 0.5 * (vec1 + vec2);
+            unitVec = interpolatedVec / norm(interpolatedVec);
+            
+            %now calculate the angle between the two vectors this equals
+            %cos(theta)
+            cosTheta = (dot(vec1, vec2) / (norm(vec1) * norm(vec2)));
+            
+            %now use the angle to calculate the angle bias. big angle = 1
+            %small angle = 0; This must be exponential to some degree
+            angleBias = ((cosTheta + 1) / 2)^(readParam('SimulationParams.txt', 'angleBiasExponent'));
+            
+            %new max velocity for this case
+            NEW_VELO = MAX_VELOCITY * ((pathDistance / 2) / SPEED_UP_DIST);
             
             if currentDist <= (pathDistance / 2)
-                WaypointVelocities(index, 1:3) = ((currentDist / (pathDistance / 2)) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity)) * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * ((currentDist / (pathDistance / 2)) * (NEW_VELO - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
             elseif pathDistance - currentDist < (pathDistance / 2)
-                WaypointVelocities(index, 1:3) = (((pathDistance - currentDist) / (pathDistance / 2)) * (MAX_VELOCITY)) * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * (((pathDistance - currentDist) / (pathDistance / 2)) * (NEW_VELO))) * unitVec;
             else
-                WaypointVelocities(index, 1:3) = MAX_VELOCITY * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * NEW_VELO) * unitVec;
             end
         end
         
@@ -238,15 +258,32 @@ else
         elseif index == m
             WaypointVelocities(index, 1:3) = [0, 0, 0];
         else
-            %calculate unit vector for velocity
-            unitVec = (Waypoints(index + 1, 1:3) - Waypoints(index, 1:3)) / norm(Waypoints(index + 1, 1:3) - Waypoints(index, 1:3));
+            %calculate unit vector for velocity this is the vector that
+            %interpolates the two vectors around it
+            vec1 = Waypoints(index, 1:3) - Waypoints(index - 1, 1:3);
+            vec2 = Waypoints(index + 1, 1:3) - Waypoints(index, 1:3);
+            %interpolate the vector evenly. Give BIAS in the future if you
+            %want. this could be proportional to the length
+            vec1Bias = norm(vec1) / (norm(vec1) + norm(vec2));
+            vec2Bias = 1 - vec1Bias;
+            interpolatedVec = (vec1Bias * vec1) + (vec2Bias * vec2);
+            %interpolatedVec = 0.5 * (vec1 + vec2);
+            unitVec = interpolatedVec / norm(interpolatedVec);
+            
+            %now calculate the angle between the two vectors this equals
+            %cos(theta)
+            cosTheta = (dot(vec1, vec2) / (norm(vec1) * norm(vec2)));
+            
+            %now use the angle to calculate the angle bias. big angle = 1
+            %small angle = 0; This must be exponential to some degree
+            angleBias = ((cosTheta + 1) / 2)^(readParam('SimulationParams.txt', 'angleBiasExponent'));
             
             if currentDist < SPEED_UP_DIST
-                WaypointVelocities(index, 1:3) = ((currentDist / SPEED_UP_DIST) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity)) * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * ((currentDist / SPEED_UP_DIST) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
             elseif pathDistance - currentDist < SLOW_DOWN_DIST
-                WaypointVelocities(index, 1:3) = (((pathDistance - currentDist) / SLOW_DOWN_DIST) * (MAX_VELOCITY)) * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * (((pathDistance - currentDist) / SLOW_DOWN_DIST) * (MAX_VELOCITY))) * unitVec;
             else
-                WaypointVelocities(index, 1:3) = MAX_VELOCITY * unitVec;
+                WaypointVelocities(index, 1:3) = (angleBias * MAX_VELOCITY) * unitVec;
             end
         end
         
