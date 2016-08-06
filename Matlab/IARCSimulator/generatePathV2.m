@@ -179,6 +179,11 @@ for index = (1:1:m)
     end
 end
 
+%% SIMPLIFY WAYPOINTS
+
+oldWaypoints = Waypoints;
+Waypoints = simplifyPath(oldWaypoints, map, 1 / MAP_RES);
+
 %now create the velocities for each waypoint
 
 SPEED_UP_DIST = readParam('SimulationParams.txt', 'speedUpDistance');
@@ -230,15 +235,31 @@ if SPEED_UP_DIST + SLOW_DOWN_DIST < pathDistance % use (pathDistance / 2)
             %small angle = 0; This must be exponential to some degree
             angleBias = ((cosTheta + 1) / 2)^(readParam('SimulationParams.txt', 'angleBiasExponent'));
             
+            %now calculate the distance bias
+            distanceBias = 1;
+            %use the smaller value
+            if norm(vec2) <= norm(vec2)
+                distanceBias = norm(vec2) / readParam('SimulationParams.txt', 'distanceThreshold');
+            else
+                distanceBias = norm(vec1) / readParam('SimulationParams.txt', 'distanceThreshold');
+            end
+            %constrain the value to 1 and 0
+            if distanceBias > 1
+                distanceBias = 1;
+            end
+            if distanceBias < 0
+                distanceBias = 0;
+            end
+            
             %new max velocity for this case
             NEW_VELO = MAX_VELOCITY * ((pathDistance / 2) / SPEED_UP_DIST);
             
             if currentDist <= (pathDistance / 2)
-                WaypointVelocities(index, 1:3) = (angleBias * ((currentDist / (pathDistance / 2)) * (NEW_VELO - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * ((currentDist / (pathDistance / 2)) * (NEW_VELO - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
             elseif pathDistance - currentDist < (pathDistance / 2)
-                WaypointVelocities(index, 1:3) = (angleBias * (((pathDistance - currentDist) / (pathDistance / 2)) * (NEW_VELO))) * unitVec;
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * (((pathDistance - currentDist) / (pathDistance / 2)) * (NEW_VELO))) * unitVec;
             else
-                WaypointVelocities(index, 1:3) = (angleBias * NEW_VELO) * unitVec;
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * NEW_VELO) * unitVec;
             end
         end
         
@@ -278,12 +299,28 @@ else
             %small angle = 0; This must be exponential to some degree
             angleBias = ((cosTheta + 1) / 2)^(readParam('SimulationParams.txt', 'angleBiasExponent'));
             
-            if currentDist < SPEED_UP_DIST
-                WaypointVelocities(index, 1:3) = (angleBias * ((currentDist / SPEED_UP_DIST) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
-            elseif pathDistance - currentDist < SLOW_DOWN_DIST
-                WaypointVelocities(index, 1:3) = (angleBias * (((pathDistance - currentDist) / SLOW_DOWN_DIST) * (MAX_VELOCITY))) * unitVec;
+            %now calculate the distance bias
+            distanceBias = 1;
+            %use the smaller value
+            if norm(vec2) <= norm(vec2)
+                distanceBias = norm(vec2) / readParam('SimulationParams.txt', 'distanceThreshold');
             else
-                WaypointVelocities(index, 1:3) = (angleBias * MAX_VELOCITY) * unitVec;
+                distanceBias = norm(vec1) / readParam('SimulationParams.txt', 'distanceThreshold');
+            end
+            %constrain the value to 1 and 0
+            if distanceBias > 1
+                distanceBias = 1;
+            end
+            if distanceBias < 0
+                distanceBias = 0;
+            end
+            
+            if currentDist < SPEED_UP_DIST
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * ((currentDist / SPEED_UP_DIST) * (MAX_VELOCITY - norm(quad.velocity)) + norm(quad.velocity))) * unitVec;
+            elseif pathDistance - currentDist < SLOW_DOWN_DIST
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * (((pathDistance - currentDist) / SLOW_DOWN_DIST) * (MAX_VELOCITY))) * unitVec;
+            else
+                WaypointVelocities(index, 1:3) = (distanceBias * angleBias * MAX_VELOCITY) * unitVec;
             end
         end
         
@@ -339,7 +376,8 @@ plot(targetPos(1), targetPos(2), '*b', 'MarkerSize',10);
 plot(quad.pos(1), quad.pos(2), '*g', 'MarkerSize', 10);
 plot(startLocation(1), startLocation(2), 'xg', 'MarkerSize', 10);
 plot(endLocation(1), endLocation(2), 'xr', 'MarkerSize', 10);
-plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), '-r', 'LineWidth', 2);
+plot3(oldWaypoints(:, 1), oldWaypoints(:, 2), oldWaypoints(:, 3), 'or', 'LineWidth', 1, 'MarkerSize', 1);
+plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), 'og', 'LineWidth', 5);
 
 legend('PRM Path', 'PRM Node', 'PATH', 'OriginalTargetPos','OriginalQuadPos','Starting Pos', 'Ending Pos');
 %hold off
