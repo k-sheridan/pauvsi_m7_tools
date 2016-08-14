@@ -4,7 +4,7 @@ function [ results ] = simulation( seed )
 % PROGRAMATIC RULES: coordinate system ([-10, 10], [-10, 10])
 % When working with nerual net the inputs must be accounted for
 
-GAME_TIME_LIMIT = 20; %600 seconds time limit
+GAME_TIME_LIMIT = 1; %600 seconds time limit
 GAME_DT = 0.02; %time change for game
 ROOMBA_DT = 0.1;
 rng(seed); %set the rng
@@ -12,7 +12,7 @@ randomNumberGenerator = rng; %create the random number generator
 
 %Initialize game time variables
 %create the quad
-quadcopter = Quadcopter([0, 0, 2.5]);
+quadcopter = Quadcopter([8, 0, 2.5]);
 quadcopter.motorForces = [12.5, 12.5, 12.5, 12.5];
 %create the roombas (1X10)
 for index = (1:1:10)
@@ -27,7 +27,7 @@ end
 %start the game
 for t = (0:GAME_DT:GAME_TIME_LIMIT)
     %run the quad and pass rng
-    [quadcopter, randomNumberGenerator] = quadcopter.run(GAME_DT, randomNumberGenerator);
+    [quadcopter, randomNumberGenerator] = quadcopter.run(GAME_DT, randomNumberGenerator, roombas, obstacles);
     
     if ~mod(t, ROOMBA_DT)
         %collide all robots
@@ -46,7 +46,7 @@ for t = (0:GAME_DT:GAME_TIME_LIMIT)
         %fprintf('Time: %f\n', t);
     end
     %pause(0.1);
-    %results = quadcopter;
+    results = quadcopter;
 end
 end
 

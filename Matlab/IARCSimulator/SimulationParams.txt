@@ -1,8 +1,8 @@
 VARIABLE-VALUE-UNIT
 quadMass                #5#   kg
-quadMomentX             #1.5#
-quadMomentY             #1.5#
-quadMomentZ             #1#
+quadMomentX             #0.5#
+quadMomentY             #0.5#
+quadMomentZ             #0.4#
 quadMinZForce           #-45#   N
 quadMaxForce            #100#   N
 quadMaxAngle            #0.5236# Radians
@@ -23,3 +23,4 @@ speedUpDistance       #15# m   (the distance it takes to reach max speed)
 maxWaypointVelocity   #10# m/s (maximum waypoint velocity)
 angleBiasExponent     #2.5#  (how exponential the bias is)
 distanceThreshold     #10#   (between yawpoints that will allow max velocity)
+trajectoryUpdateInterval #1# s (time between trajectory updates)

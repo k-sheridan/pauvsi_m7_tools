@@ -153,6 +153,12 @@ classdef Roomba
                 end
             end
         end
+        
+        %get velocity
+        function velocity = getVelocity(obj)
+            velocity = [0, 0, 0];
+            velocity(1:2) = obj.FORWARD_VELOCITY * [cos(obj.yaw), sin(obj.yaw)];
+        end
     end
     
 end

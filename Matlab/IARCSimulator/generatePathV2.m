@@ -1,4 +1,4 @@
-function [ Trajectory, Waypoints, TotalFlightTime, prm ] = generatePathV2( targetPos, targetVel, quad,  obstacles, prm )
+function [ Trajectory, Waypoints, TotalFlightTime] = generatePathV2( targetPos, targetVel, quad,  obstacles)
 %GENERATEPATHV2 Summary 
 %   This function will create a set of waypoints and trajectory which will
 %   fly the aircraft to its goal.
@@ -121,7 +121,7 @@ prm.NumNodes = readParam('SimulationParams.txt', 'prmNodeCount');
 prm.ConnectionDistance = readParam('SimulationParams.txt', 'prmNodeConnectionDist');
 
 %update the prm map
-update(prm);
+%update(prm);
 
 %find the path and set it to Waypoints
 PRMPath = findpath(prm, startLocation, endLocation);
