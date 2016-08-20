@@ -105,10 +105,10 @@ end
 
 motorForces = zeros(4, length(Mb));
 
-torqueMat = [1, 1,  1,  1;
-             d, 0, -d,  0;
-             0, d,  0, -d;
-            -c, c, -c,  c];
+torqueMat = [ 1,  1,  1,  1; % matrix that will calculate the
+                d, -d, -d,  d; % moment and motor forces necessary
+                d,  d, -d, -d;
+                -c,  c, -c,  c];
         
 for it = (1:1:length(foundRoots))
     motorForces(:, it) = torqueMat \ [norm(f_total(:, it)); Mb(1, it); Mb(2, it); Mb(3, it)];

@@ -369,26 +369,26 @@ QUAD_MAX_VELOCITY = readParam('SimulationParams.txt', 'maxVelocity');
 
 %%DRAWING
 
-figure(2);
-show(prm);
-hold on
-plot(targetPos(1), targetPos(2), '*b', 'MarkerSize',10);
-plot(quad.pos(1), quad.pos(2), '*g', 'MarkerSize', 10);
-plot(startLocation(1), startLocation(2), 'xg', 'MarkerSize', 10);
-plot(endLocation(1), endLocation(2), 'xr', 'MarkerSize', 10);
-plot3(oldWaypoints(:, 1), oldWaypoints(:, 2), oldWaypoints(:, 3), 'or', 'LineWidth', 1, 'MarkerSize', 1);
-plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), 'og', 'LineWidth', 5);
-
-legend('PRM Path', 'PRM Node', 'PATH', 'OriginalTargetPos','OriginalQuadPos','Starting Pos', 'Ending Pos');
-%hold off
-
-%Plot the Trajectory
-figure(2)
-[p1, p2] = trajectoryPlotter(Trajectory);    
-%daspect([20 20 5])
-%axis([-1 11 -1 11 -10 10])
-%hold on
-arrow3(p1, p2, 'b', 0.4)
-hold off
+% figure(2);
+% show(prm);
+% hold on
+% plot(targetPos(1), targetPos(2), '*b', 'MarkerSize',10);
+% plot(quad.pos(1), quad.pos(2), '*g', 'MarkerSize', 10);
+% plot(startLocation(1), startLocation(2), 'xg', 'MarkerSize', 10);
+% plot(endLocation(1), endLocation(2), 'xr', 'MarkerSize', 10);
+% plot3(oldWaypoints(:, 1), oldWaypoints(:, 2), oldWaypoints(:, 3), 'or', 'LineWidth', 1, 'MarkerSize', 1);
+% plot3(Waypoints(:, 1), Waypoints(:, 2), Waypoints(:, 3), 'og', 'LineWidth', 5);
+% 
+% legend('PRM Path', 'PRM Node', 'PATH', 'OriginalTargetPos','OriginalQuadPos','Starting Pos', 'Ending Pos');
+% %hold off
+% 
+% %Plot the Trajectory
+% figure(2)
+% [p1, p2] = trajectoryPlotter(Trajectory);    
+% %daspect([20 20 5])
+% %axis([-1 11 -1 11 -10 10])
+% %hold on
+% arrow3(p1, p2, 'b', 0.4)
+% hold off
 end
 
